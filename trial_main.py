@@ -1,17 +1,24 @@
 import ollama
+import json
 
-user_job_desc_ = input("Please insert your job description: ")
-print(user_job_desc_)
+# Initialize the Ollama client
+client = ollama.Client()
 
-user_describe_yourself =  input("Please insert your a description of you and your skills: ")
-print(user_describe_yourself)
+# Define the model and the input prompt
+model = "llama3.2"  # Replace with your model name
+prompt = "What is Python in markdown format?"
 
-messages=[
-    {"role": "system", "content": "You are a AI that helps builds a resume in markdown format." },
-    {"role": "user", "content": user_job_desc_},
-    {"role": "user", "content":  user_describe_yourself}
-]
-response = ollama.chat(model="llama3.2", messages=messages)
+# Send the query to the model
+response = client.generate(model=model, prompt=prompt)
 
+# Print the response from the model
+print("Response from Ollama:")
+print(response.response)
 
-print(response["message"]["content"])
+# Save to JSON
+data = {"markdown": response.response}
+
+with open("response.json", "w", encoding="utf-8") as f:
+    json.dump(data, f, indent=4)
+
+print("Response saved to response.json")
