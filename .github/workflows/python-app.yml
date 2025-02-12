@@ -34,6 +34,6 @@ jobs:
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
         # Enforce format errors and fail the build if any are found
         flake8 . --count --max-complexity=10 --max-line-length=127 --statistics
-    - name: Test with pytest (Ensure correcrt module execution)
+    - name: Test with pytest (Ensure correct module execution)
       run: |
         pythin -m pytest tests/
