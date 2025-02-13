@@ -1,4 +1,114 @@
-Resume Generator using Ollama and JSON
+Sprint 2 Job Data Processing Project
+
+Overview
+=================================
+This project processes job postings from JSON files and stores them in an SQLite database.
+It includes: JSON parsing, Database creation & data insertion, Automated testing using pytest,
+Continuous Integration (CI) with GitHub Actions
+
+File Descriptions
+🔹 Sprint2/jsonparsing.py
+
+Reads job data from a JSON file line by line.
+Converts each line into a Python dictionary.
+Returns a list of parsed job objects.
+
+🔹 Sprint2/database.py
+Creates and manages the SQLite database.
+Contains functions to:
+Create tables (job_postings, job_providers).
+Insert job data from parsed JSON.
+Handle errors gracefully.
+
+🔹 Sprint2/main.py
+Main execution file that:
+Calls JSON parsing functions.
+Creates necessary database tables.
+Inserts parsed job data into the database.
+
+🔹 tests/test_jsonparsing.py
+Tests parse_json_file() function to ensure:
+Correct number of job postings are parsed.
+Data is correctly extracted.
+
+🔹 tests/test_database.py
+Tests database functions:
+Ensures tables are created correctly.
+Verifies data insertion and retrieval.
+
+🔹 .github/workflows/test.yml
+Defines CI/CD automation:
+Runs flake8 for linting.
+Executes pytest to validate functionality.
+Ensures code quality before merging.
+
+Installation & Setup
+
+1️ Clone the Repository
+clone this repository
+
+2️ Create a Virtual Environment (Optional but Recommended)
+On macOS/Linux
+python3 -m venv venv
+source venv/bin/activate
+
+On Windows
+python -m venv venv
+venv\Scripts\activate
+
+Once activated, your terminal will show (venv), meaning you're working inside the virtual environment.
+
+3️ Install Dependencies
+pip install -r requirements.txt
+This installs:
+SQLite3 (Built into Python)
+pytest (For testing)
+flake8 (For linting)
+
+Any other dependencies needed for the project.
+
+4️ Set Up the Database
+Before inserting data, create the database schema.
+python -c "from Sprint2.database import create_database_rapid_jobs_2, create_database_rapid_jobs_2_providers; create_database_rapid_jobs_2(); create_database_rapid_jobs_2_providers()"
+This ensures that:
+The job postings table is created.
+The job providers table is set up.
+
+5️ Run the Application
+python Sprint2/main.py
+
+This will:
+Parse job postings from JSON files.
+Insert them into the database.
+Print any errors or missing data.
+
+6️ Running Tests (Optional)
+pytest tests/
+If all tests pass, you should see output like:
+
+==================== test session starts ====================
+collected 2 items
+
+test_jsonparsing.py ✓
+test_database.py ✓
+
+==================== 2 passed in 0.25s =====================
+
+7️ Linting (Code Formatting Check)
+To check for any coding style issues, use flake8:
+flake8 .
+If there are errors, fix them before pushing changes.
+
+CI/CD: GitHub Actions Integration
+The project includes GitHub Actions for Continuous Integration (CI):
+Every push or pull request to master triggers:
+Linting (flake8)
+Unit Testing (pytest)
+The workflow ensures that all commits meet quality standards before merging.
+
+=============================================================================================
+
+Resume Generator using Ollama and JSON Contained In Sprint1 Folder
 
 This program allows users to generate a resume in Markdown format using the Ollama AI model Specifically llama3.2.
 The user provides their job description and a personal summary of their skills, and the AI generates a structured resume
