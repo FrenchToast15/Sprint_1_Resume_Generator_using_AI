@@ -222,7 +222,6 @@ def insert_rapid_jobs_2_data_into_db(parsed_data, dbname='rapidjobs2.db'):
                             f"Error inserting data for job {job_id}: {e}"
                         )
 
-
                 else:
                     print(f"Skipping non-dictionary item inside list: {data}")
 
