@@ -217,11 +217,11 @@ def insert_rapid_jobs_2_data_into_db(parsed_data, dbname='rapidjobs2.db'):
                             ''', (job_id, provider_name, provider_url))
 
                     except Exception as e:  # error handling
+                        job_id = data.get('id', 'unknown')
                         print(
-                            f"Error inserting data for job {
-                                data.get(
-                                    'id', 'unknown')}: {e}"
+                            f"Error inserting data for job {job_id}: {e}"
                         )
+
 
                 else:
                     print(f"Skipping non-dictionary item inside list: {data}")
