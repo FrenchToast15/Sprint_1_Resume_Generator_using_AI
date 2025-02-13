@@ -1,5 +1,6 @@
 import sqlite3
 
+
 def safe_float(value):
     try:
         # If the value is empty or falsy, return 0.0
@@ -10,9 +11,8 @@ def safe_float(value):
 
 
 def create_database_rapid_results(db_name='rapidResults.db'):
-    '''
-    This function creates a database with a primary key and the following column names
-    '''
+    # This function creates a database with a primary key and the following
+    # column names
     conn = sqlite3.connect(
         db_name)  # Use sqlite3.connect() to connect to the database
     cursor = conn.cursor()  # creates a pointer to process DML (Data Manipulation Language)
@@ -218,9 +218,10 @@ def insert_rapid_jobs_2_data_into_db(parsed_data, dbname='rapidjobs2.db'):
 
                     except Exception as e:  # error handling
                         print(
-                            f"Error inserting data for job {data.get('id', 'unknown')}: {e}"
+                            f"Error inserting data for job {
+                                data.get(
+                                    'id', 'unknown')}: {e}"
                         )
-
 
                 else:
                     print(f"Skipping non-dictionary item inside list: {data}")
