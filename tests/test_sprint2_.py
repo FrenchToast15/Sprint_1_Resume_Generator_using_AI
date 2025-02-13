@@ -38,8 +38,10 @@ def create_test_database(db_name="test_rapidjobs2.db"):
     """
     Creates a test database with required tables.
     """
-    create_database_rapid_jobs_2(db_name)  # Creates the main job postings table
-    create_database_rapid_jobs_2_providers(db_name)  # Ensures provider table exists
+    create_database_rapid_jobs_2(
+        db_name)  # Creates the main job postings table
+    create_database_rapid_jobs_2_providers(
+        db_name)  # Ensures provider table exists
 
 
 def test_database_insert_and_retrieve():
@@ -55,25 +57,19 @@ def test_database_insert_and_retrieve():
     create_test_database(test_db)  # Create all required tables
 
     # Insert test job data
-    test_data = [
-        [
-            {
-                "id": "test_123",
-                "title": "Software Engineer",
-                "company": "Test Corp",
-                "description": "Develop test applications...",
-                "location": "Test City",
-                "employmentType": "Full-time",
-                "salaryRange": "$100,000 - $120,000",
-                "image": "https://example.com/test.jpg",
-                "datePosted": "2025-02-12",
-                "jobProviders": [
-                    {"jobProvider": "TestLinkedIn", "url": "https://linkedin.com/test_123"},
-                    {"jobProvider": "TestIndeed", "url": "https://indeed.com/test_123"}
-                ]
-            }
-        ]
-    ]
+    test_data = [[{"id": "test_123",
+                   "title": "Software Engineer",
+                   "company": "Test Corp",
+                   "description": "Develop test applications...",
+                   "location": "Test City",
+                   "employmentType": "Full-time",
+                   "salaryRange": "$100,000 - $120,000",
+                   "image": "https://example.com/test.jpg",
+                   "datePosted": "2025-02-12",
+                   "jobProviders": [{"jobProvider": "TestLinkedIn",
+                                     "url": "https://linkedin.com/test_123"},
+                                    {"jobProvider": "TestIndeed",
+                                     "url": "https://indeed.com/test_123"}]}]]
 
     insert_rapid_jobs_2_data_into_db(test_data, test_db)
 
@@ -82,18 +78,23 @@ def test_database_insert_and_retrieve():
     cursor = conn.cursor()
 
     # Verify job posting exists
-    cursor.execute("SELECT * FROM rapid_jobs2_job_postings WHERE id = ?", ("test_123",))
+    cursor.execute(
+        "SELECT * FROM rapid_jobs2_job_postings WHERE id = ?", ("test_123",))
     job_result = cursor.fetchone()
 
     # Verify job providers exist
-    cursor.execute("SELECT * FROM rapid_jobs2_job_providers WHERE rapid_jobs2_id = ?", ("test_123",))
+    cursor.execute(
+        "SELECT * FROM rapid_jobs2_job_providers WHERE rapid_jobs2_id = ?",
+        ("test_123",
+         ))
     provider_results = cursor.fetchall()
 
     conn.close()
 
     # Assertions
     assert job_result is not None, "Test job was not inserted!"
-    assert len(provider_results) == 2, "Test job providers were not inserted correctly!"
+    assert len(
+        provider_results) == 2, "Test job providers were not inserted correctly!"
 
     print("Test passed: Database insert and retrieve works!")
 

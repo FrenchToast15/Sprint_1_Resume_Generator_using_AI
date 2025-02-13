@@ -6,7 +6,8 @@ json_filename = 'rapidResults.json'
 parsed_data = parse_json_file(json_filename)  # Parses JSON File
 
 create_database_rapid_results()  # creates database
-insert_rapid_results_data_into_db(parsed_data)  # Inserts parsed data into database
+# Inserts parsed data into database
+insert_rapid_results_data_into_db(parsed_data)
 
 json_filename2 = 'rapid_jobs2.json'
 parsed_data2 = parse_json_file(json_filename2)

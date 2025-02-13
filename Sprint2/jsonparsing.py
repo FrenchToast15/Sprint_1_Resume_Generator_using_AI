@@ -11,8 +11,11 @@ def parse_json_file(json_file_name):
             line = line.strip()  # Remove leading/trailing whitespace
             if line:  # If line is empty, skip empty lines
                 try:
-                    data = json.loads(line)  # Parse the JSON line (converts JSON string into Python Dictionary)
-                    parsed_data.append(data)  # Adds the parsed data to the list
+                    # Parse the JSON line (converts JSON string into Python
+                    # Dictionary)
+                    data = json.loads(line)
+                    # Adds the parsed data to the list
+                    parsed_data.append(data)
                 except json.JSONDecodeError as e:  # if JSON format incorrect, error is caught
                     print(f"Error decoding line: {e}")
 
