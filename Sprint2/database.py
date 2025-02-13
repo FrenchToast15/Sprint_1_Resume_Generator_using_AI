@@ -1,6 +1,5 @@
 import sqlite3
 
-
 def safe_float(value):
     try:
         # If the value is empty or falsy, return 0.0

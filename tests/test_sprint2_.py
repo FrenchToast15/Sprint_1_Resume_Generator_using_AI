@@ -2,7 +2,7 @@ import json
 import os
 import sqlite3
 
-from Sprint2 import jsonparsing, database
+from Sprint2 import jsonparsing
 from Sprint2.database import insert_rapid_jobs_2_data_into_db, create_database_rapid_jobs_2, \
     create_database_rapid_jobs_2_providers
 
