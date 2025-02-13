@@ -9,12 +9,13 @@ def safe_float(value):
         # If it can't be converted, return 0.0
         return 0.0
 
+
 def create_database_rapid_results(db_name='rapidResults.db'):
     '''
     This function creates a database with a primary key and the following column names
     '''
     conn = sqlite3.connect(db_name)  # Use sqlite3.connect() to connect to the database
-    cursor = conn.cursor() # creates a pointer to process DML (Data Manipulation Language)
+    cursor = conn.cursor()  # creates a pointer to process DML (Data Manipulation Language)
 
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS rapid_results_job_postings (
@@ -50,11 +51,12 @@ def create_database_rapid_results(db_name='rapidResults.db'):
     conn.commit()  # Save the changes
     conn.close()  # Close the connection
 
-def insert_rapid_results_data_into_db(parsed_data, dbname='rapidResults.db'):
-    conn = sqlite3.connect(dbname) # Use sqlite3.connect() to connect to the database
-    cursor = conn.cursor() # creates a pointer to process DML (Data Manipulation Language)
 
-    for data in parsed_data: # loops through each job posting in parsed data (assuming it is a list of dictionaries)
+def insert_rapid_results_data_into_db(parsed_data, dbname='rapidResults.db'):
+    conn = sqlite3.connect(dbname)  # Use sqlite3.connect() to connect to the database
+    cursor = conn.cursor()  # creates a pointer to process DML (Data Manipulation Language)
+
+    for data in parsed_data:  # loops through each job posting in parsed data (assuming it is a list of dictionaries)
         cursor.execute('''
         INSERT OR REPLACE INTO rapid_results_job_postings (
             id, site, job_url, job_url_direct, title, company, location, job_type, 
@@ -96,8 +98,8 @@ def insert_rapid_results_data_into_db(parsed_data, dbname='rapidResults.db'):
         ))
 
     # Commit and close the connection
-    conn.commit() # Saves the changes to the database
-    conn.close() # closes the database
+    conn.commit()  # Saves the changes to the database
+    conn.close()  # closes the database
     print(f"Data was successfully inserted into {dbname}")
 
 
@@ -105,7 +107,7 @@ def create_database_rapid_jobs_2(db_name='rapidjobs2.db'):
     conn = sqlite3.connect(db_name)  # Use sqlite3.connect() to connect to the database
     cursor = conn.cursor()
 
-    #creates a table in sql if it does not exist
+    # creates a table in sql if it does not exist
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS rapid_jobs2_job_postings (
         id TEXT PRIMARY KEY,
@@ -147,7 +149,7 @@ def create_database_rapid_jobs_2_providers(db_name='rapidjobs2.db'):
 
 
 def insert_rapid_jobs_2_data_into_db(parsed_data, dbname='rapidjobs2.db'):
-    conn = sqlite3.connect(dbname) # connects to database
+    conn = sqlite3.connect(dbname)  # connects to database
     cursor = conn.cursor()
 
     '''
@@ -181,11 +183,14 @@ def insert_rapid_jobs_2_data_into_db(parsed_data, dbname='rapidjobs2.db'):
                         ))
 
                         # After inserting the job posting, insert job providers associated with it
-                        job_id = data.get('id', None)  # Store the job posting ID ( we will be using this to make a foreign key)
+                        job_id = data.get('id',
+                                          None)  # Store the job posting ID ( we will be using this to make a foreign key)
 
-                        for provider in data.get('jobProviders', []): # gets the jobProviders list from the json parsed data
-                            provider_name = provider.get('jobProvider', "") # gets and stores the job provider name and stores it. if missing it will default to empty strings
-                            provider_url = provider.get('url', "") # same as the line above.
+                        for provider in data.get('jobProviders',
+                                                 []):  # gets the jobProviders list from the json parsed data
+                            provider_name = provider.get('jobProvider',
+                                                         "")  # gets and stores the job provider name and stores it. if missing it will default to empty strings
+                            provider_url = provider.get('url', "")  # same as the line above.
 
                             # Insert each job provider into the rapid_jobs2_job_providers table
                             cursor.execute('''
@@ -194,7 +199,7 @@ def insert_rapid_jobs_2_data_into_db(parsed_data, dbname='rapidjobs2.db'):
                             ) VALUES (?, ?, ?)
                             ''', (job_id, provider_name, provider_url))
 
-                    except Exception as e: # error handling
+                    except Exception as e:  # error handling
                         print(f"Error inserting data for job {data.get('id', 'unknown')}: {e}")
 
                 else:
@@ -207,6 +212,3 @@ def insert_rapid_jobs_2_data_into_db(parsed_data, dbname='rapidjobs2.db'):
     conn.commit()
     conn.close()
     print(f"Data successfully inserted into {dbname}")
-
-
-

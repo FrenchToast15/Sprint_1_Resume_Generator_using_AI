@@ -29,9 +29,9 @@ def test_parse_json_file():
 
     print("Test passed: JSON parsing works correctly!")
 
+
 # Run test
 test_parse_json_file()
-
 
 
 def create_test_database(db_name="test_rapidjobs2.db"):
@@ -40,6 +40,7 @@ def create_test_database(db_name="test_rapidjobs2.db"):
     """
     create_database_rapid_jobs_2(db_name)  # Creates the main job postings table
     create_database_rapid_jobs_2_providers(db_name)  # Ensures provider table exists
+
 
 def test_database_insert_and_retrieve():
     """
@@ -95,6 +96,7 @@ def test_database_insert_and_retrieve():
     assert len(provider_results) == 2, "Test job providers were not inserted correctly!"
 
     print("Test passed: Database insert and retrieve works!")
+
 
 # Run test
 test_database_insert_and_retrieve()
