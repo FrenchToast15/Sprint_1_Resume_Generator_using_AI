@@ -10,8 +10,11 @@ def safe_float(value):
         return 0.0
 
 def create_database_rapid_results(db_name='rapidResults.db'):
+    '''
+    This function creates a database with a primary key and the following column names
+    '''
     conn = sqlite3.connect(db_name)  # Use sqlite3.connect() to connect to the database
-    cursor = conn.cursor()
+    cursor = conn.cursor() # creates a pointer to process DML (Data Manipulation Language)
 
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS rapid_results_job_postings (
@@ -48,10 +51,10 @@ def create_database_rapid_results(db_name='rapidResults.db'):
     conn.close()  # Close the connection
 
 def insert_rapid_results_data_into_db(parsed_data, dbname='rapidResults.db'):
-    conn = sqlite3.connect(dbname)
-    cursor = conn.cursor()
+    conn = sqlite3.connect(dbname) # Use sqlite3.connect() to connect to the database
+    cursor = conn.cursor() # creates a pointer to process DML (Data Manipulation Language)
 
-    for data in parsed_data:
+    for data in parsed_data: # loops through each job posting in parsed data (assuming it is a list of dictionaries)
         cursor.execute('''
         INSERT OR REPLACE INTO rapid_results_job_postings (
             id, site, job_url, job_url_direct, title, company, location, job_type, 
@@ -61,6 +64,8 @@ def insert_rapid_results_data_into_db(parsed_data, dbname='rapidResults.db'):
             company_description, logo_photo_url, banner_photo_url, ceo_name, ceo_photo_url
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ''', (
+            # retrieves the value associated with the key in the dictionary
+            # if key is missing, the value will be an empty string
             data.get('id', ''),
             data.get('site', ''),
             data.get('job_url', ''),
@@ -91,8 +96,8 @@ def insert_rapid_results_data_into_db(parsed_data, dbname='rapidResults.db'):
         ))
 
     # Commit and close the connection
-    conn.commit()
-    conn.close()
+    conn.commit() # Saves the changes to the database
+    conn.close() # closes the database
     print(f"Data was successfully inserted into {dbname}")
 
 
@@ -100,6 +105,7 @@ def create_database_rapid_jobs_2(db_name='rapidjobs2.db'):
     conn = sqlite3.connect(db_name)  # Use sqlite3.connect() to connect to the database
     cursor = conn.cursor()
 
+    #creates a table in sql if it does not exist
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS rapid_jobs2_job_postings (
         id TEXT PRIMARY KEY,
@@ -124,9 +130,10 @@ def create_database_rapid_jobs_2_providers(db_name='rapidjobs2.db'):
     conn = sqlite3.connect(db_name)  # Use sqlite3.connect() to connect to the database
     cursor = conn.cursor()
 
-    # Enable foreign key support
+    # Enables the foreign key to work
     cursor.execute('PRAGMA foreign_keys = ON')
 
+    # creates table and creates foreign key
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS rapid_jobs2_job_providers (
         rapid_jobs2_id TEXT,
@@ -140,12 +147,16 @@ def create_database_rapid_jobs_2_providers(db_name='rapidjobs2.db'):
 
 
 def insert_rapid_jobs_2_data_into_db(parsed_data, dbname='rapidjobs2.db'):
-    conn = sqlite3.connect(dbname)
+    conn = sqlite3.connect(dbname) # connects to database
     cursor = conn.cursor()
 
-    for job_list in parsed_data:  # Iterate through the outer list
-        if isinstance(job_list, list):  # Ensure it's a list
-            for data in job_list:  # Now iterate through each job posting inside the list
+    '''
+    In this case, the json is organized a list of list. The file is one big list, with multiple job postings contained inside
+    various lists withing the giant list. Ex: [ [{j1},{j2},], [{j3}, {j4}] ]  
+    '''
+    for job_list in parsed_data:  # Iterate through the overall list
+        if isinstance(job_list, list):  # Ensure the overall file is a list
+            for data in job_list:  # Now iterate through each job posting inside the lists within the giant list
                 if isinstance(data, dict):  # Ensure the job posting is a dictionary
                     try:
                         # Insert the job posting into the rapid_jobs2_job_postings table
@@ -170,11 +181,11 @@ def insert_rapid_jobs_2_data_into_db(parsed_data, dbname='rapidjobs2.db'):
                         ))
 
                         # After inserting the job posting, insert job providers associated with it
-                        job_id = data.get('id', None)  # Store the job posting ID to associate with providers
+                        job_id = data.get('id', None)  # Store the job posting ID ( we will be using this to make a foreign key)
 
-                        for provider in data.get('jobProviders', []):
-                            provider_name = provider.get('jobProvider', "")
-                            provider_url = provider.get('url', "")
+                        for provider in data.get('jobProviders', []): # gets the jobProviders list from the json parsed data
+                            provider_name = provider.get('jobProvider', "") # gets and stores the job provider name and stores it. if missing it will default to empty strings
+                            provider_url = provider.get('url', "") # same as the line above.
 
                             # Insert each job provider into the rapid_jobs2_job_providers table
                             cursor.execute('''
@@ -183,7 +194,7 @@ def insert_rapid_jobs_2_data_into_db(parsed_data, dbname='rapidjobs2.db'):
                             ) VALUES (?, ?, ?)
                             ''', (job_id, provider_name, provider_url))
 
-                    except Exception as e:
+                    except Exception as e: # error handling
                         print(f"Error inserting data for job {data.get('id', 'unknown')}: {e}")
 
                 else:
@@ -192,7 +203,7 @@ def insert_rapid_jobs_2_data_into_db(parsed_data, dbname='rapidjobs2.db'):
         else:
             print(f"Skipping non-list item in parsed_data: {job_list}")
 
-    # Commit the transaction and close the connection
+    # Saves the database and close the connection
     conn.commit()
     conn.close()
     print(f"Data successfully inserted into {dbname}")

@@ -1,62 +1,59 @@
-import sqlite3
 import json
 import os
-from Sprint2.database import insert_rapid_jobs_2_data_into_db
+import sqlite3
 
-def create_tables(dbname='test_rapidjobs2.db'):
-    '''
-    setting up the tables so we can test the database in the other function.
-    '''
-    conn = sqlite3.connect(dbname)
-    cursor = conn.cursor()
-
-    # Create job postings table
-    cursor.execute('''
-    CREATE TABLE IF NOT EXISTS rapid_jobs2_job_postings (
-        id TEXT PRIMARY KEY,
-        title TEXT,
-        company TEXT,
-        description TEXT,
-        location TEXT,
-        employmentType TEXT,
-        basePayRange TEXT,
-        image TEXT,
-        datePosted TEXT,
-        salaryRange TEXT,
-        jobProvider TEXT,
-        jobProviderUrl TEXT
-    )
-    ''')
-
-    # Create job providers table
-    cursor.execute('''
-    CREATE TABLE IF NOT EXISTS rapid_jobs2_job_providers (
-        rapid_jobs2_id TEXT,
-        provider_name TEXT,
-        provider_url TEXT,
-        FOREIGN KEY (rapid_jobs2_id) REFERENCES rapid_jobs2_job_postings(id)
-    )
-    ''')
-
-    conn.commit()
-    conn.close()
+from Sprint2 import jsonparsing, database
+from Sprint2.database import insert_rapid_jobs_2_data_into_db, create_database_rapid_jobs_2, \
+    create_database_rapid_jobs_2_providers
 
 
-def test_insert_and_retrieve():
-    '''
-    Testing the creation and insertion of data into a database.
-    '''
+def test_parse_json_file():
+    # Create a temporary JSON file for testing
+    test_json_filename = "test_jobs.json"
+    test_data = [
+        {"id": "1", "title": "Software Engineer", "company": "TestCorp"},
+        {"id": "2", "title": "Data Scientist", "company": "Data Inc."}
+    ]
 
-    test_db = 'test_rapidjobs2.db'
+    with open(test_json_filename, "w") as f:
+        for item in test_data:
+            f.write(json.dumps(item) + "\n")
 
-    # Ensure the test database is new
+    # Parse the JSON file
+    parsed_data = jsonparsing.parse_json_file(test_json_filename)
+
+    # Assertions
+    assert len(parsed_data) == 2, "Incorrect number of items parsed!"
+    assert parsed_data[0]["title"] == "Software Engineer", "First item title does not match!"
+    assert parsed_data[1]["company"] == "Data Inc.", "Second item company does not match!"
+
+    print("Test passed: JSON parsing works correctly!")
+
+# Run test
+test_parse_json_file()
+
+
+
+def create_test_database(db_name="test_rapidjobs2.db"):
+    """
+    Creates a test database with required tables.
+    """
+    create_database_rapid_jobs_2(db_name)  # Creates the main job postings table
+    create_database_rapid_jobs_2_providers(db_name)  # Ensures provider table exists
+
+def test_database_insert_and_retrieve():
+    """
+    Test inserting and retrieving job data.
+    """
+    test_db = "test_rapidjobs2.db"
+
+    # Ensure a fresh test database
     if os.path.exists(test_db):
         os.remove(test_db)
 
-    #Create tables
-    create_tables(test_db)
+    create_test_database(test_db)  # Create all required tables
 
-    #Insert a test job
+    # Insert test job data
     test_data = [
         [
             {
@@ -77,29 +74,27 @@ def test_insert_and_retrieve():
         ]
     ]
 
-    # Insert test data
     insert_rapid_jobs_2_data_into_db(test_data, test_db)
 
-    # Verify the data
+    # Check database contents
     conn = sqlite3.connect(test_db)
     cursor = conn.cursor()
 
-    # Query job postings table
+    # Verify job posting exists
     cursor.execute("SELECT * FROM rapid_jobs2_job_postings WHERE id = ?", ("test_123",))
     job_result = cursor.fetchone()
 
-    # Query job providers table
+    # Verify job providers exist
     cursor.execute("SELECT * FROM rapid_jobs2_job_providers WHERE rapid_jobs2_id = ?", ("test_123",))
     provider_results = cursor.fetchall()
 
     conn.close()
 
-    # Testing to see if we can get desired results
+    # Assertions
     assert job_result is not None, "Test job was not inserted!"
     assert len(provider_results) == 2, "Test job providers were not inserted correctly!"
 
-    print("Test passed: Data inserted and verified successfully!")
+    print("Test passed: Database insert and retrieve works!")
 
-
-# Runs the test
-test_insert_and_retrieve()
+# Run test
+test_database_insert_and_retrieve()
