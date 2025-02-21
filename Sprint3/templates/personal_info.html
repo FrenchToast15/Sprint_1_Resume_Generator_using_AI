@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Information</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='personal_info.css') }}">
+</head>
+<body>
+
+    <h1>Personal Information Form</h1>
+
+    <form action="/submit_info" method="POST">
+        <fieldset>
+            <legend>Personal Information</legend>
+                <!-- Name -->
+                <label for="fname">First Name:</label>
+                <input type="text" id="fname" name="fname" required>
+
+                <label for="lname">Last Name:</label>
+                <input type="text" id="lname" name="lname" required>
+
+                <!-- Contact Info -->
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+
+                <label for="phone">Phone Number:</label>
+                <input type="tel" id="phone" name="phone" required>
+
+                <!-- Location -->
+                <label for="location">Location:</label>
+                <input type="text" id="location" name="location" placeholder="City, State, Country">
+        </fieldset>
+
+        <fieldset>
+            <legend>Online Profiles</legend>
+
+                <!-- Online Profiles -->
+                <label for="linkedin">LinkedIn Profile:</label>
+                <input type="url" id="linkedin" name="linkedin" placeholder="https://linkedin.com/in/yourprofile">
+
+                <label for="github">GitHub Profile:</label>
+                <input type="url" id="github" name="github" placeholder="https://github.com/yourusername">
+
+                <label for="Portfolio">Portfolio Website:</label>
+                <input type="url" id="Portfolio" name="github" placeholder="https://portfolio.com/urusername">
+        </fieldset>
+
+
+
+        <fieldset>
+            <legend>Education and Experience</legend>
+
+            <!-- Schools Attended -->
+            <label for="School">Collage/University:</label>
+            <textarea id="School" name="School" rows="3" placeholder="List Schools Attended..."></textarea>
+
+            <!-- Projects -->
+            <label for="projects">Projects:</label>
+            <textarea id="projects" name="projects" rows="3" placeholder="Briefly describe your projects..."></textarea>
+
+            <!-- Classes -->
+            <label for="classes">Relevant Classes:</label>
+            <textarea id="classes" name="classes" rows="3" placeholder="List relevant courses you've taken..."></textarea>
+        </fieldset>
+
+        <fieldset>
+            <legend>Additional Information</legend>
+            <!-- Additional Information -->
+            <label for="other">Other Information:</label>
+            <textarea id="other" name="other" rows="3" placeholder="Any other relevant details..."></textarea>
+        </fieldset>
+
+        <!-- Submit Button -->
+        <input type="submit" value="Save">
+    </form>
+
+</body>
+</html>
+
