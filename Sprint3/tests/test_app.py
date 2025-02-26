@@ -5,7 +5,7 @@ from unittest.mock import patch
 import pytest
 from flask import url_for
 
-from Sprint3.app import app, get_db_connection # save_personal_info
+from Sprint3.app import app, get_db_connection  # save_personal_info
 
 
 def test_get_db_connection():
