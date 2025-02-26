@@ -14,6 +14,7 @@ def get_db_connection(db_name='job_postings.db'):
 
 @app.route("/")
 def welcome():
+    # returns the welcome.html
     return render_template("welcome.html")
 
 
@@ -24,6 +25,7 @@ def personal_info():
 
 @app.route("/submitted_info", methods=['POST'])
 def submit_info():
+    # saves the information submitted from the personal_info.html
     if request.method == 'POST':
         user_data = (
             request.form.get('fname'),
@@ -68,6 +70,7 @@ def save_personal_info(user_data):
 
 
 @app.route("/display_info")
+# Displays latest entry to user
 def display_info():
     conn = sqlite3.connect("users_personal_information.db")
     conn.row_factory = sqlite3.Row
@@ -82,6 +85,7 @@ def display_info():
 
 @app.route("/job_postings")
 def job_postings():
+    # Displays job posting entries from database
     conn = get_db_connection('job_postings.db')
     cursor = conn.cursor()
 
@@ -100,6 +104,7 @@ def job_postings():
 
 
 @app.route("/job/<job_id>")
+# Displays more details of job posting when clicked on
 def job_details(job_id):
     conn = get_db_connection('job_postings.db')
     conn.row_factory = sqlite3.Row
@@ -114,7 +119,11 @@ def job_details(job_id):
 
     conn.close()
 
-    return render_template("job_details.html", job=job) if job else render_template("job_not_found.html"), 404
+    # If job found, render job details page, else return 404
+    if job:
+        return render_template("job_details.html", job=job)
+    else:
+        return "Job not found", 404  # Using a simple string message
 
 
 if __name__ == "__main__":
