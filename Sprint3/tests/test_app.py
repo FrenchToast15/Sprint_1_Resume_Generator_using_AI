@@ -161,33 +161,6 @@ def test_submit_info(client, mocker):
     assert response.location == url_for('display_info')
 
 
-# def test_save_personal_info():
-#     """Test if the save_personal_info function correctly inserts data into the database."""
-# 
-#     # Sample form data
-#     form_data = (
-#         'John', 'Doe', 'johndoe@example.com', '1234567890', 'San Francisco',
-#         'https://linkedin.com/in/johndoe', 'https://github.com/johndoe', 'https://johndoe.com',
-#         'University of Example', 'Project 1, Project 2', 'Class A, Class B', 'Additional info'
-#     )
-# 
-#     # Correct patch to your app's specific path where sqlite3 is used
-#     with patch('Sprint3.app.sqlite3.connect') as mock_connect:  # Use the correct path here
-#         mock_cursor = mock_connect.return_value.cursor.return_value
-# 
-#         # Call the save_personal_info function
-#         save_personal_info(form_data)
-# 
-#         # Check if the cursor's execute method was called with the expected SQL query
-#         mock_cursor.execute.assert_any_call('''INSERT INTO users (fname, lname, email, phone, location,
-#             linkedin, github, portfolio, school, projects, classes, other_info)
-#             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''', form_data)
-# 
-#         # Check if commit and close were called
-#         mock_connect.return_value.commit.assert_called_once()
-#         mock_connect.return_value.close.assert_called_once()
-
-
 def test_display_info(client):
     """Test if the /display_info route retrieves and displays the correct user data."""
 
