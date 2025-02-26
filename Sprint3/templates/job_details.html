@@ -2,18 +2,23 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <title>{{ job["title"] }} - Job Details</title>
 </head>
 <body>
-    <h1>{{ job["title"] }}</h1>
-    <p><strong>Company:</strong> {{ job["company"] }}</p>
-    <p><strong>Location:</strong> {{ job["location"] }}</p>
-    <p><strong>Job Type:</strong> {{ job["job_type"] }}</p>
-    <p><strong>Date Posted:</strong> {{ job["date_posted"] }}</p>
-    <p><strong>Salary Range:</strong> {{ job["min_amount"] }} - {{ job["max_amount"] }} {{ job["currency"] }}</p>
-    <p><strong>Remote:</strong> {{ "Yes" if job["is_remote"] == "TRUE" else "No" }}</p>
-    <p><strong>Description:</strong> {{ job["description"] }}</p>
-    <a href="{{ job['job_url_direct'] }}">Apply Here</a>
+<h1>{{ job["title"] }}</h1>
+<p><strong>Company:</strong> {{ job["company"] }}</p>
+<p><strong>Location:</strong> {{ job["location"] }}</p>
+<p><strong>Job Type:</strong> {{ job["job_type"] or job["employmentType"] }}</p>
+<p><strong>Date Posted:</strong> {{ job["date_posted"] }}</p>
+<p><strong>Salary Range:</strong>
+    {% if job["min_amount"] and job["max_amount"] %}
+    {{ job["min_amount"] }} - {{ job["max_amount"] }} {{ job["currency"] }}
+    {% else %}
+    {{ job["salaryRange"] or "Salary Not Specified" }}
+    {% endif %}</p>
+<p><strong>Remote:</strong> {{ "Yes" if job["is_remote"] == "TRUE" else "No" }}</p>
+<p><strong>Description:</strong> {{ job["description"] }}</p>
+<a href="{{ job['job_url_direct'] }}">Apply Here</a>
 </body>
 </html>

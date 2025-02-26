@@ -2,23 +2,24 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <title>Job Listings</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <h1>Available Jobs</h1>
-        <ul class="job-list">
-            {% for job in jobs %}
-                <li class="job-item">
-                    <a href="{{ url_for('job_details', job_id=job['id']) }}">
-                        <strong>{{ job["title"] }}</strong> - {{ job["company"] }}
-                    </a>
-                    <p>{{ job["location"] }} | {{ job["job_type"] }} | Posted: {{ job["date_posted"] }}</p>
-                </li>
-            {% endfor %}
-        </ul>
-    </div>
+<div class="container">
+    <h1>Available Jobs</h1>
+    <h2>Number of Job Postings: {{ job_count }}</h2>
+    <ul class="job-list">
+        {% for job in jobs %}
+        <li class="job-item">
+            <a href="{{ url_for('job_details', job_id=job['id']) }}">
+                <strong>{{ job["title"] }}</strong> - {{ job["company"] }}
+            </a>
+            <p>{{ job["location"] }} | {{ job["job_type"] }} | Posted: {{ job["date_posted"] }}</p>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
 </body>
 </html>

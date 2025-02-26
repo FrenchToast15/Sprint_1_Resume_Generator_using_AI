@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>Submitted Information</h1>
+{% if user_data %}
+<p><strong>First Name:</strong> {{ user_data["fname"] }}</p>
+<p><strong>Last Name:</strong> {{ user_data["lname"] }}</p>
+<p><strong>Email:</strong> {{ user_data["email"] }}</p>
+<p><strong>Phone:</strong> {{ user_data["phone"] }}</p>
+<p><strong>Location:</strong> {{ user_data["location"] }}</p>
+<p><strong>LinkedIn:</strong> <a href="{{ user_data['linkedin'] }}">{{ user_data['linkedin'] }}</a></p>
+<p><strong>GitHub:</strong> <a href="{{ user_data['github'] }}">{{ user_data['github'] }}</a></p>
+<p><strong>Portfolio:</strong> <a href="{{ user_data['portfolio'] }}">{{ user_data['portfolio'] }}</a></p>
+<p><strong>Education:</strong> {{ user_data["school"] }}</p>
+<p><strong>Projects:</strong> {{ user_data["projects"] }}</p>
+<p><strong>Relevant Classes:</strong> {{ user_data["classes"] }}</p>
+<p><strong>Additional Information:</strong> {{ user_data["other_info"] }}</p>
+{% else %}
+<p>No data submitted yet.</p>
+{% endif %}
+
+</body>
+</html>

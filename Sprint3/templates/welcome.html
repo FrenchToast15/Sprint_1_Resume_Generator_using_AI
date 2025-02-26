@@ -2,20 +2,20 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <title>Job Listings</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <h1>Pick Available Jobs or Enter information about yourself </h1>
-        <a href="{{ url_for('job_postings') }}">
-            <button class="button button1">Job Postings</button>
-        </a>
+<div class="container">
+    <h1>Pick Available Jobs or Enter information about yourself </h1>
+    <a href="{{ url_for('job_postings') }}">
+        <button class="button button1">Job Postings</button>
+    </a>
 
-        <a href="{{ url_for('personal_info') }}">
-            <button class="button button1">Enter Personal Info</button>
-        </a>
-    </div>
+    <a href="{{ url_for('personal_info') }}">
+        <button class="button button1">Enter Personal Info</button>
+    </a>
+</div>
 </body>
 </html>

@@ -2,78 +2,77 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <title>Personal Information</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='personal_info.css') }}">
+    <link href="{{ url_for('static', filename='personal_info.css') }}" rel="stylesheet">
 </head>
 <body>
 
-    <h1>Personal Information Form</h1>
+<h1>Personal Information Form</h1>
 
-    <form action="/submit_info" method="POST">
-        <fieldset>
-            <legend>Personal Information</legend>
-                <!-- Name -->
-                <label for="fname">First Name:</label>
-                <input type="text" id="fname" name="fname" required>
+<form action="/submitted_info" method="POST">
+    <fieldset>
+        <legend>Personal Information</legend>
+        <!-- Name -->
+        <label for="fname">First Name:</label>
+        <input id="fname" name="fname" required type="text">
 
-                <label for="lname">Last Name:</label>
-                <input type="text" id="lname" name="lname" required>
+        <label for="lname">Last Name:</label>
+        <input id="lname" name="lname" required type="text">
 
-                <!-- Contact Info -->
-                <label for="email">Email:</label>
-                <input type="email" id="email" name="email" required>
+        <!-- Contact Info -->
+        <label for="email">Email:</label>
+        <input id="email" name="email" required type="email">
 
-                <label for="phone">Phone Number:</label>
-                <input type="tel" id="phone" name="phone" required>
+        <label for="phone">Phone Number:</label>
+        <input id="phone" name="phone" required type="tel">
 
-                <!-- Location -->
-                <label for="location">Location:</label>
-                <input type="text" id="location" name="location" placeholder="City, State, Country">
-        </fieldset>
+        <!-- Location -->
+        <label for="location">Location:</label>
+        <input id="location" name="location" placeholder="City, State, Country" type="text">
+    </fieldset>
 
-        <fieldset>
-            <legend>Online Profiles</legend>
+    <fieldset>
+        <legend>Online Profiles</legend>
 
-                <!-- Online Profiles -->
-                <label for="linkedin">LinkedIn Profile:</label>
-                <input type="url" id="linkedin" name="linkedin" placeholder="https://linkedin.com/in/yourprofile">
+        <!-- Online Profiles -->
+        <label for="linkedin">LinkedIn Profile:</label>
+        <input id="linkedin" name="linkedin" placeholder="https://linkedin.com/in/yourprofile" type="url">
 
-                <label for="github">GitHub Profile:</label>
-                <input type="url" id="github" name="github" placeholder="https://github.com/yourusername">
+        <label for="github">GitHub Profile:</label>
+        <input id="github" name="github" placeholder="https://github.com/yourusername" type="url">
 
-                <label for="Portfolio">Portfolio Website:</label>
-                <input type="url" id="Portfolio" name="github" placeholder="https://portfolio.com/urusername">
-        </fieldset>
+        <label for="Portfolio">Portfolio Website:</label>
+        <input id="Portfolio" name="portfolio" placeholder="https://portfolio.com/urusername" type="url">
+    </fieldset>
 
 
+    <fieldset>
+        <legend>Education and Experience</legend>
 
-        <fieldset>
-            <legend>Education and Experience</legend>
+        <!-- Schools Attended -->
+        <label for="School">College/University:</label>
+        <textarea id="School" name="School" placeholder="List Schools Attended..." rows="3"></textarea>
 
-            <!-- Schools Attended -->
-            <label for="School">Collage/University:</label>
-            <textarea id="School" name="School" rows="3" placeholder="List Schools Attended..."></textarea>
+        <!-- Projects -->
+        <label for="projects">Projects:</label>
+        <textarea id="projects" name="projects" placeholder="Briefly describe your projects..." rows="3"></textarea>
 
-            <!-- Projects -->
-            <label for="projects">Projects:</label>
-            <textarea id="projects" name="projects" rows="3" placeholder="Briefly describe your projects..."></textarea>
+        <!-- Classes -->
+        <label for="classes">Relevant Classes:</label>
+        <textarea id="classes" name="classes" placeholder="List relevant courses you've taken..." rows="3"></textarea>
+    </fieldset>
 
-            <!-- Classes -->
-            <label for="classes">Relevant Classes:</label>
-            <textarea id="classes" name="classes" rows="3" placeholder="List relevant courses you've taken..."></textarea>
-        </fieldset>
+    <fieldset>
+        <legend>Additional Information</legend>
+        <!-- Additional Information -->
+        <label for="other">Other Information:</label>
+        <textarea id="other" name="other" placeholder="Any other relevant details..." rows="3"></textarea>
+    </fieldset>
 
-        <fieldset>
-            <legend>Additional Information</legend>
-            <!-- Additional Information -->
-            <label for="other">Other Information:</label>
-            <textarea id="other" name="other" rows="3" placeholder="Any other relevant details..."></textarea>
-        </fieldset>
-
-        <!-- Submit Button -->
-        <input type="submit" value="Save">
-    </form>
+    <!-- Submit Button -->
+    <input type="submit" value="Save">
+</form>
 
 </body>
 </html>
