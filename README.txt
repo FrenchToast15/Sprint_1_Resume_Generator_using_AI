@@ -1,3 +1,51 @@
+Sprint 3:
+Job Posting & Personal Information Web App
+
+This is a Flask-based web application that allows users to submit personal information and view job postings from a database.
+
+Features:
+Submit personal information through a form
+Save user data into a SQLite database
+Display the latest user entry
+View job postings from two different sources
+Click on job postings to see more details
+
+Technologies Used:
+Python (Flask)
+SQLite
+HTML & Jinja2 Templates
+
+Installation:
+Clone the repository:
+
+git clone <repo-url>
+cd <repo-folder>
+
+Create a virtual environment (optional but recommended):
+python -m venv venv
+source venv/bin/activate  # On Windows use `venv\Scripts\activate`
+
+Install dependencies:
+pip install flask
+
+Run the application:
+python app.py
+
+Open a browser and go to http://127.0.0.1:5000/.
+
+Database:
+The application uses two SQLite databases:
+
+users_personal_information.db for storing personal information
+
+job_postings.db for job postings
+
+Tables are created automatically if they do not exist.
+
+
+
+==============================
+
 Sprint 2 Job Data Processing Project
 
 Overview
