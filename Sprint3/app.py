@@ -59,7 +59,8 @@ def save_personal_info(user_data):
         school TEXT, projects TEXT, classes TEXT, other_info TEXT
     )''')
 
-    cursor.execute('''INSERT INTO users (fname, lname, email, phone, location, linkedin, github, portfolio, school, projects, classes, other_info)
+    cursor.execute('''INSERT INTO users (fname, lname, email, phone, location,
+     linkedin, github, portfolio, school, projects, classes, other_info)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''', user_data)
 
     conn.commit()
