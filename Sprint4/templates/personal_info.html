@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+     <link href="{{ url_for('static', filename='personal_info.css') }}" rel="stylesheet">
+    <title>Personal Information</title>
+</head>
+<body>
+
+<h1>Enter Your Personal Information</h1>
+
+<form action="{{ url_for('personal_info', profile_id=profile['id']) }}" method="POST">
+    <fieldset>
+        <legend>Personal Information</legend>
+        <label for="fname">First Name:</label>
+        <input id="fname" name="fname" type="text" value="{{ profile['fname'] }}" required>
+
+        <label for="lname">Last Name:</label>
+        <input id="lname" name="lname" type="text" value="{{ profile['lname'] }}" required>
+
+        <label for="email">Email:</label>
+        <input id="email" name="email" type="email" required>
+
+        <label for="phone">Phone Number:</label>
+        <input id="phone" name="phone" type="tel" required>
+
+        <label for="location">Location:</label>
+        <input id="location" name="location" type="text">
+
+        <label for="linkedin">LinkedIn:</label>
+        <input id="linkedin" name="linkedin" type="url">
+
+        <label for="github">GitHub:</label>
+        <input id="github" name="github" type="url">
+
+        <label for="portfolio">Portfolio:</label>
+        <input id="portfolio" name="portfolio" type="url">
+
+        <label for="School">College/University:</label>
+        <textarea id="School" name="School" rows="3"></textarea>
+
+        <label for="projects">Projects:</label>
+        <textarea id="projects" name="projects" rows="3"></textarea>
+
+        <label for="classes">Relevant Classes:</label>
+        <textarea id="classes" name="classes" rows="3"></textarea>
+
+        <label for="other">Other Information:</label>
+        <textarea id="other" name="other" rows="3"></textarea>
+    </fieldset>
+
+    <button type="submit">Save Information</button>
+</form>
+
+</body>
+</html>

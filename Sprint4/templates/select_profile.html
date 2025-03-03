@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Select Profile</title>
+</head>
+<body>
+
+<h1>Select a Profile</h1>
+
+{% if profile_count == 0 %}
+    <p>No profiles available. Please create a profile first.</p>
+{% else %}
+    <ul>
+        {% for profile in profiles %}
+            <li>
+                <a href="{{ url_for('personal_info', profile_id=profile['id']) }}">{{ profile['username'] }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+</body>
+</html>

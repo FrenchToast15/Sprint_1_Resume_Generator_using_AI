@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Profile Details</title>
+</head>
+<body>
+
+<h1>Profile Details for {{ profile_info['username'] }}</h1>
+
+<p><strong>First Name:</strong> {{ profile_info['fname'] }}</p>
+<p><strong>Last Name:</strong> {{ profile_info['lname'] }}</p>
+<p><strong>Email:</strong> {{ profile_info['email'] }}</p>
+<p><strong>Phone:</strong> {{ profile_info['phone'] }}</p>
+<p><strong>Location:</strong> {{ profile_info['location'] }}</p>
+<p><strong>LinkedIn:</strong> <a href="{{ profile_info['linkedin'] }}">{{ profile_info['linkedin'] }}</a></p>
+<p><strong>GitHub:</strong> <a href="{{ profile_info['github'] }}">{{ profile_info['github'] }}</a></p>
+<p><strong>Portfolio:</strong> <a href="{{ profile_info['portfolio'] }}">{{ profile_info['portfolio'] }}</a></p>
+<p><strong>School:</strong> {{ profile_info['School'] }}</p>
+<p><strong>Projects:</strong> {{ profile_info['projects'] }}</p>
+<p><strong>Classes:</strong> {{ profile_info['classes'] }}</p>
+<p><strong>Other Information:</strong> {{ profile_info['other'] }}</p>
+
+
+
+<a href="{{ url_for('personal_info', profile_id=profile_info['id']) }}">Edit Information</a>
+<a href="{{ url_for('profiles') }}">View Existing Profiles</a>
+
+</body>
+</html>
