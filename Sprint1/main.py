@@ -15,8 +15,3 @@ print(resume_markdown)
 
 # Save response to JSON
 save_to_json(resume_markdown)
-
-
-
-
-

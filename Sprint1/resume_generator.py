@@ -1,7 +1,7 @@
 import ollama
 
 
-def generate_resume_ollama(user_job_desc, user_self_desc, model= "llama3.2"):
+def generate_resume_ollama(user_job_desc, user_self_desc, model="llama3.2"):
     """
     Generates a resume in Markdown format using an AI model from Ollama.
 
@@ -21,15 +21,15 @@ def generate_resume_ollama(user_job_desc, user_self_desc, model= "llama3.2"):
                     f"\n{user_self_desc}\n "
                     f"and creating a resume for this job: \n{user_job_desc}\n"},
         {"role": "user", "content": f"Generate a resume in markdown format fot this job:\n{user_job_desc}"},
-        {"role": "user", "content":f"Here is my background information:\n{user_self_desc}"}
+        {"role": "user", "content": f"Here is my background information:\n{user_self_desc}"}
     ]
 
     try:
 
         # Generate response from Ollama
-        response = ollama.chat(model=model,messages=messages)  # Ensure correct model name
+        response = ollama.chat(model=model, messages=messages)  # Ensure correct model name
 
-        markdown_content = response.get("message",{}).get("content", "Error: No Generated Content")
+        markdown_content = response.get("message", {}).get("content", "Error: No Generated Content")
         return markdown_content
 
     except Exception as e:

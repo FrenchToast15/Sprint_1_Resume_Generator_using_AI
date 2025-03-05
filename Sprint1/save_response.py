@@ -9,5 +9,3 @@ def save_to_json(content, filename="response.json"):
         print(f"\nResponse saved to {filename}")
     except Exception as e:
         print(f"Error saving file: {e}")
-
-
