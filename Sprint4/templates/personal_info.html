@@ -3,55 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-     <link href="{{ url_for('static', filename='personal_info.css') }}" rel="stylesheet">
     <title>Personal Information</title>
+    <link href="{{ url_for('static', filename='personal_info.css') }}" rel="stylesheet">
 </head>
 <body>
+<!-- Flash Messages (Error Handling) -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div>
+                {% for category, message in messages %}
+                    <p class="{{ category }}">{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
 
-<h1>Enter Your Personal Information</h1>
+<h1>Personal Information Form</h1>
 
-<form action="{{ url_for('personal_info', profile_id=profile['id']) }}" method="POST">
+<form action="/submitted_info" method="POST">
     <fieldset>
         <legend>Personal Information</legend>
+        <!-- Profile -->
+        <label for="profile_name">Profile Name:</label>
+        <input id="profile_name" name="profile_name" required type="text">
+
+        <!-- Name -->
         <label for="fname">First Name:</label>
-        <input id="fname" name="fname" type="text" value="{{ profile['fname'] }}" required>
+        <input id="fname" name="fname" required type="text">
 
         <label for="lname">Last Name:</label>
-        <input id="lname" name="lname" type="text" value="{{ profile['lname'] }}" required>
+        <input id="lname" name="lname" required type="text">
 
+        <!-- Contact Info -->
         <label for="email">Email:</label>
-        <input id="email" name="email" type="email" required>
+        <input id="email" name="email" required type="email">
 
         <label for="phone">Phone Number:</label>
-        <input id="phone" name="phone" type="tel" required>
+        <input id="phone" name="phone" required type="tel">
 
+        <!-- Location -->
         <label for="location">Location:</label>
-        <input id="location" name="location" type="text">
-
-        <label for="linkedin">LinkedIn:</label>
-        <input id="linkedin" name="linkedin" type="url">
-
-        <label for="github">GitHub:</label>
-        <input id="github" name="github" type="url">
-
-        <label for="portfolio">Portfolio:</label>
-        <input id="portfolio" name="portfolio" type="url">
-
-        <label for="School">College/University:</label>
-        <textarea id="School" name="School" rows="3"></textarea>
-
-        <label for="projects">Projects:</label>
-        <textarea id="projects" name="projects" rows="3"></textarea>
-
-        <label for="classes">Relevant Classes:</label>
-        <textarea id="classes" name="classes" rows="3"></textarea>
-
-        <label for="other">Other Information:</label>
-        <textarea id="other" name="other" rows="3"></textarea>
+        <input id="location" name="location" placeholder="City, State, Country" type="text">
     </fieldset>
 
-    <button type="submit">Save Information</button>
+    <fieldset>
+        <legend>Online Profiles</legend>
+
+        <!-- Online Profiles -->
+        <label for="linkedin">LinkedIn Profile:</label>
+        <input id="linkedin" name="linkedin" placeholder="https://linkedin.com/in/yourprofile" type="url">
+
+        <label for="github">GitHub Profile:</label>
+        <input id="github" name="github" placeholder="https://github.com/yourusername" type="url">
+
+        <label for="Portfolio">Portfolio Website:</label>
+        <input id="Portfolio" name="portfolio" placeholder="https://portfolio.com/urusername" type="url">
+    </fieldset>
+
+
+    <fieldset>
+        <legend>Education and Experience</legend>
+
+        <!-- Schools Attended -->
+        <label for="School">College/University:</label>
+        <textarea id="School" name="School" placeholder="List Schools Attended..." rows="3"></textarea>
+
+        <!-- Projects -->
+        <label for="projects">Projects:</label>
+        <textarea id="projects" name="projects" placeholder="Briefly describe your projects..." rows="3"></textarea>
+
+        <!-- Classes -->
+        <label for="classes">Relevant Classes:</label>
+        <textarea id="classes" name="classes" placeholder="List relevant courses you've taken..." rows="3"></textarea>
+    </fieldset>
+
+    <fieldset>
+        <legend>Additional Information</legend>
+        <!-- Additional Information -->
+        <label for="other">Other Information:</label>
+        <textarea id="other" name="other" placeholder="Any other relevant details..." rows="3"></textarea>
+    </fieldset>
+
+    <!-- Submit Button -->
+    <input type="submit" value="Save">
 </form>
 
 </body>
 </html>
+

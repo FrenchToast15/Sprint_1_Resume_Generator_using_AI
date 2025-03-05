@@ -2,11 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Profile Submission</title>
+    <title>Title</title>
 </head>
 <body>
 <h1>Submitted Information</h1>
 {% if user_data %}
+<p><strong>Profile Name:</strong> {{ user_data["profile_name"] }}</p>
 <p><strong>First Name:</strong> {{ user_data["fname"] }}</p>
 <p><strong>Last Name:</strong> {{ user_data["lname"] }}</p>
 <p><strong>Email:</strong> {{ user_data["email"] }}</p>

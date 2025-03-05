@@ -1,129 +1,73 @@
-import os
 import sqlite3
-from flask import Flask, render_template, request, url_for, redirect, flash
+from flask import Flask, render_template, request, url_for, redirect, flash, session
 
 app = Flask(__name__)
-app.secret_key = "supersecretkey"  # Needed for flash messages
+app.secret_key = 'your_secret_key'  # Required for flash messages
 
-def get_users_db_connection():
-    conn = sqlite3.connect('users.db')
-    conn.row_factory = sqlite3.Row
+
+
+
+# Function to get a database connection
+def get_db_connection(db_name):
+    conn = sqlite3.connect(db_name)
+    conn.row_factory = sqlite3.Row  # Allow dictionary-style access
     return conn
 
-# Function to initialize database
-def initialize_db():
-    conn = sqlite3.connect("users.db")
+
+# Initialize user database with table
+def initialize_user_db():
+    conn = get_db_connection("users.db")
     cursor = conn.cursor()
-
-    # Create profile table
-    cursor.execute('''CREATE TABLE IF NOT EXISTS profile (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                username TEXT UNIQUE NOT NULL,
-                fname TEXT,
-                lname TEXT
-            )
-        ''')
-
-    # Create user_information table linked to profile
     cursor.execute('''CREATE TABLE IF NOT EXISTS user_information (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    profile_id INTEGER,
-    fname TEXT,
-    lname TEXT,
-    email TEXT,
-    phone TEXT,
-    location TEXT,
-    linkedin TEXT,
-    github TEXT,
-    portfolio TEXT,
-    School TEXT,
-    projects TEXT,
-    classes TEXT,
-    other TEXT,
-    FOREIGN KEY (profile_id) REFERENCES profile(id)
-            )
-        ''')
-
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        profile_name TEXT UNIQUE,
+        fname TEXT, lname TEXT, email TEXT, phone TEXT, location TEXT,
+        linkedin TEXT, github TEXT, portfolio TEXT,
+        school TEXT, projects TEXT, classes TEXT, other_info TEXT
+    )''')
     conn.commit()
     conn.close()
 
-# Initialize DB when the app starts
-initialize_db()
+def prepare_session_data():
+    user_profile_info =f""" 
+    Name: {session['fname']} {session['lname']}
+    Email: {session['email']}
+    Phone: {session['phone']}
+    Location: {session['location']}
+    LinkedIn: {session['linkedin']}
+    GitHub: {session['github']}
+    Portfolio: {session['portfolio']}
+    School: {session['school']}
+    Projects: {session['projects']}
+    Classes: {session['classes']}
+    Other Info: {session['other_info']}
+    """
+    job_info = f"""
+    {session['job_title']} 
+    {session['job_company']} 
+    {session['job_description']} 
+    """
+    return None
 
+
+# Home Page
 @app.route("/")
 def welcome():
     return render_template("welcome.html")
 
-@app.route("/profile_creation")
-def profile_creation():
-    return render_template("profile_creation.html")
 
-@app.route("/submitted_profile", methods=['POST'])
-def submit_profile():
+# Personal Info Form
+@app.route("/personal_info", methods=['GET'])
+def personal_info():
+    return render_template("personal_info.html")
+
+
+# Handle Form Submission
+@app.route("/submitted_info", methods=['POST'])
+def submit_info():
     if request.method == 'POST':
         user_data = (
-            request.form.get('username'),
-            request.form.get('fname'),
-            request.form.get('lname')
-        )
-
-        print(f"Submitted Data: {user_data}")  # Debugging print
-
-        try:
-            profile_id = save_profile_info(user_data)
-            print(f"Profile ID: {profile_id}")  # Debugging print
-            return redirect(url_for('profiles'))
-        except sqlite3.IntegrityError:
-            flash("Username already exists! Choose a different username.")
-            print("Username already exists")  # Debugging print
-            return redirect(url_for('profile_creation'))
-
-    return "Form submission error", 400
-
-# Function to save profile and return its ID
-def save_profile_info(user_data):
-    conn = sqlite3.connect("users.db")
-    cursor = conn.cursor()
-
-    cursor.execute(''' 
-        INSERT INTO profile (username, fname, lname) 
-        VALUES (?, ?, ?)''', user_data)
-
-    profile_id = cursor.lastrowid  # Get the inserted profile's ID
-    conn.commit()
-    conn.close()
-
-    return profile_id  # Return the new profile ID
-
-@app.route("/profiles")
-def profiles():
-    # Displays profile entries from the database
-    conn = get_users_db_connection()
-    cursor = conn.cursor()
-
-    cursor.execute("SELECT id, username FROM profile")
-    profiles = cursor.fetchall()
-
-    conn.close()
-
-    profile_count = len(profiles)
-
-    return render_template("select_profile.html", profiles=profiles, profile_count=profile_count)
-
-
-@app.route("/profile/<int:profile_id>/personal_info", methods=['GET', 'POST'])
-def personal_info(profile_id):
-    conn = get_users_db_connection()
-    cursor = conn.cursor()
-
-    # Fetch the selected profile details
-    cursor.execute("SELECT * FROM profile WHERE id = ?", (profile_id,))
-    profile = cursor.fetchone()
-
-    if request.method == 'POST':
-        # Collect the submitted form data
-        user_info = (
-            profile_id,  # Link to the profile
+            request.form.get('profile_name'),
             request.form.get('fname'),
             request.form.get('lname'),
             request.form.get('email'),
@@ -138,60 +82,137 @@ def personal_info(profile_id):
             request.form.get('other')
         )
 
-        # Save the user information to the database
-        save_user_information(user_info)
+        if save_personal_info(user_data):
+            return redirect(url_for('display_info'))
+        else:
+            return redirect(url_for('personal_info'))  # Stay on form if error
 
-        return redirect(url_for('profile_details', profile_id=profile_id))  # Redirect to profile details page
+    return "Form submission error", 400
 
-    # Check if the user information exists already
-    cursor.execute("SELECT * FROM user_information WHERE profile_id = ?", (profile_id,))
-    user_info = cursor.fetchone()
 
+# Save Personal Info to Database (Handles Duplicate Profiles)
+def save_personal_info(user_data):
+    conn = get_db_connection("users.db")
+    cursor = conn.cursor()
+
+    profile_name = user_data[0]
+
+    try:
+        cursor.execute('''INSERT INTO user_information (profile_name, fname, lname, email, phone, location, linkedin, github, portfolio, school, projects, classes, other_info)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''', user_data)
+        conn.commit()
+    except sqlite3.IntegrityError:
+        flash(f"Profile name '{profile_name}' already exists! Choose a different name.", "error")
+        return False
+    finally:
+        conn.close()
+
+    return True
+
+
+# Display Latest Submitted Info
+@app.route("/display_info")
+def display_info():
+    conn = get_db_connection("users.db")
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM user_information ORDER BY id DESC LIMIT 1")
+    user_data = cursor.fetchone()
+    conn.close()
+
+    return render_template("submitted_info.html", user_data=user_data)
+
+
+# Display Job Postings
+@app.route("/job_postings")
+def job_postings():
+    conn = get_db_connection("job_postings.db")
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT id, title, company, location FROM rapid_results_job_postings")
+    jobs1 = cursor.fetchall()
+
+    cursor.execute("SELECT id, title, company, location FROM rapid_jobs2_job_postings")
+    jobs2 = cursor.fetchall()
+
+    conn.close()
+
+    # 🔹 Get selected profile from session
+    profile_id = session.get('selected_profile_id')
+    profile = None
+
+    if profile_id:
+        conn = get_db_connection("users.db")
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM user_information WHERE id = ?", (profile_id,))
+        profile = cursor.fetchone()
+        conn.close()
+
+    if request.method == 'POST':
+        selected_job_id = request.form.get('job_id')
+        session['selected_job_id'] = selected_job_id  # Store job selection
+        return redirect(url_for('generate_docs'))
+
+    all_jobs = jobs1 + jobs2
+    return render_template("job_postings.html", jobs=all_jobs, job_count=len(all_jobs), profile=profile)
+
+
+# Job Details Page
+@app.route("/job/<job_id>", methods=['GET', 'POST'])
+def job_details(job_id):
+    conn = get_db_connection("job_postings.db")
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT * FROM rapid_results_job_postings WHERE id = ?", (job_id,))
+    job = cursor.fetchone()
+
+    if not job:
+        cursor.execute("SELECT * FROM rapid_jobs2_job_postings WHERE id = ?", (job_id,))
+        job = cursor.fetchone()
+
+    conn.close()
+
+    if job:
+        return render_template("job_details.html", job=job)
+    else:
+        return "Job not found", 404
+
+
+# Select Profile Page
+@app.route("/select_profile", methods=['GET', 'POST'])
+def select_profile():
+    conn = get_db_connection("users.db")
+    cursor = conn.cursor()
+    cursor.execute("SELECT id, profile_name FROM user_information")
+    profiles = cursor.fetchall()
+    conn.close()
+
+    if request.method == 'POST':
+        selected_profile_id = request.form.get('profile_id')
+        session['selected_profile_id'] = selected_profile_id  # Store in session
+        return redirect(url_for('job_postings'))  # Redirect to job selection
+
+    return render_template("select_profile.html", profiles=profiles, profile_count=len(profiles))
+
+
+# Profile Details Page
+@app.route("/profile/<int:profile_id>")
+def profile_details(profile_id):
+    conn = get_db_connection("users.db")
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM user_information WHERE id = ?", (profile_id,))
+    profile = cursor.fetchone()
     conn.close()
 
     if profile:
-        return render_template("personal_info.html", profile=profile, user_info=user_info)
+        return render_template("profile_details.html", profile=profile)
     else:
         return "Profile not found", 404
 
+@app.route("generate_docs")
+def generate_doc():
+    return None
 
-# Function to save the user information into the database
-def save_user_information(user_info):
-    conn = sqlite3.connect("users.db")
-    cursor = conn.cursor()
-
-    cursor.execute(''' 
-        INSERT INTO user_information (
-            profile_id, fname, lname, email, phone, location,
-            linkedin, github, portfolio, School, projects, classes, other
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    ''', user_info)
-
-    conn.commit()
-    conn.close()
-
-@app.route("/profile_details/<int:profile_id>")
-def profile_details(profile_id):
-    conn = get_users_db_connection()
-    cursor = conn.cursor()
-
-    # Fetch the profile and user information
-    cursor.execute("SELECT * FROM profile WHERE id = ?", (profile_id,))
-    profile_info = cursor.fetchone()
-
-    cursor.execute("SELECT * FROM user_information WHERE profile_id = ?", (profile_id,))
-    user_info = cursor.fetchone()
-
-    conn.close()
-
-    if profile_info:
-        if user_info:
-            return render_template("profile_details.html", profile_info=profile_info, user_info=user_info)
-        else:
-            flash("No personal information available. Please fill in the form.", "info")
-            return redirect(url_for('personal_info', profile_id=profile_id))
-    else:
-        return "Profile details not found", 404
-
+# Run the Flask App
 if __name__ == "__main__":
+    initialize_user_db()  # Ensure database is created before running
     app.run(debug=True)

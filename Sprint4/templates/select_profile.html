@@ -4,22 +4,25 @@
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <title>Select Profile</title>
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
 </head>
 <body>
+<div class="container">
+    <h1>Select a Profile</h1>
+    <h2>Number of Profiles: {{ profile_count }}</h2>
 
-<h1>Select a Profile</h1>
-
-{% if profile_count == 0 %}
-    <p>No profiles available. Please create a profile first.</p>
-{% else %}
-    <ul>
-        {% for profile in profiles %}
-            <li>
-                <a href="{{ url_for('personal_info', profile_id=profile['id']) }}">{{ profile['username'] }}</a>
+    <form action="{{ url_for('select_profile') }}" method="POST">
+        <ul class="job-list">
+            {% for profile in profiles %}
+            <li class="job-item">
+                <input type="radio" id="profile_{{ profile.id }}" name="profile_id" value="{{ profile.id }}" required>
+                <label for="profile_{{ profile.id }}">{{ profile["profile_name"] }}</label>
             </li>
-        {% endfor %}
-    </ul>
-{% endif %}
+            {% endfor %}
+        </ul>
 
+        <button type="submit">Continue to Job Selection</button>
+    </form>
+</div>
 </body>
 </html>
