@@ -1,5 +1,13 @@
+import os
 import sqlite3
+
+from md2pdf import md2pdf
+import markdown2
+from weasyprint import HTML
+import generate_resume
 from flask import Flask, render_template, request, url_for, redirect, flash, session
+
+import ollama
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'  # Required for flash messages
@@ -12,6 +20,28 @@ def get_db_connection(db_name):
     conn = sqlite3.connect(db_name)
     conn.row_factory = sqlite3.Row  # Allow dictionary-style access
     return conn
+
+
+def prepare_session_data():
+    session['user_profile_info'] = f""" 
+    Name: {session.get('fname', 'N/A')} {session.get('lname', 'N/A')}
+    Email: {session.get('email', 'N/A')}
+    Phone: {session.get('phone', 'N/A')}
+    Location: {session.get('location', 'N/A')}
+    LinkedIn: {session.get('linkedin', 'N/A')}
+    GitHub: {session.get('github', 'N/A')}
+    Portfolio: {session.get('portfolio', 'N/A')}
+    School: {session.get('school', 'N/A')}
+    Projects: {session.get('projects', 'N/A')}
+    Classes: {session.get('classes', 'N/A')}
+    Other Info: {session.get('other_info', 'N/A')}
+    """
+
+    session['job_info'] = f"""
+    Job Title: {session.get('job_title', 'N/A')} 
+    Company: {session.get('job_company', 'N/A')} 
+    Description: {session.get('job_description', 'N/A')}
+    """
 
 
 # Initialize user database with table
@@ -28,26 +58,6 @@ def initialize_user_db():
     conn.commit()
     conn.close()
 
-def prepare_session_data():
-    user_profile_info =f""" 
-    Name: {session['fname']} {session['lname']}
-    Email: {session['email']}
-    Phone: {session['phone']}
-    Location: {session['location']}
-    LinkedIn: {session['linkedin']}
-    GitHub: {session['github']}
-    Portfolio: {session['portfolio']}
-    School: {session['school']}
-    Projects: {session['projects']}
-    Classes: {session['classes']}
-    Other Info: {session['other_info']}
-    """
-    job_info = f"""
-    {session['job_title']} 
-    {session['job_company']} 
-    {session['job_description']} 
-    """
-    return None
 
 
 # Home Page
@@ -147,11 +157,6 @@ def job_postings():
         profile = cursor.fetchone()
         conn.close()
 
-    if request.method == 'POST':
-        selected_job_id = request.form.get('job_id')
-        session['selected_job_id'] = selected_job_id  # Store job selection
-        return redirect(url_for('generate_docs'))
-
     all_jobs = jobs1 + jobs2
     return render_template("job_postings.html", jobs=all_jobs, job_count=len(all_jobs), profile=profile)
 
@@ -172,9 +177,23 @@ def job_details(job_id):
     conn.close()
 
     if job:
+        # Store job details in session
+        session['selected_job_id'] = job_id
+        session['job_title'] = job['title']
+        session['job_company'] = job['company']
+        session['job_location'] = job['location']
+        session['job_description'] = job['description']
+
+        # Prepare formatted job session data
+        prepare_session_data()
+
+        # Debugging: Print job session data to console
+        print("Updated Job Session Data:", session)
+
         return render_template("job_details.html", job=job)
     else:
         return "Job not found", 404
+
 
 
 # Select Profile Page
@@ -188,8 +207,36 @@ def select_profile():
 
     if request.method == 'POST':
         selected_profile_id = request.form.get('profile_id')
-        session['selected_profile_id'] = selected_profile_id  # Store in session
-        return redirect(url_for('job_postings'))  # Redirect to job selection
+
+        # Fetch full profile details from the database
+        conn = get_db_connection("users.db")
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM user_information WHERE id = ?", (selected_profile_id,))
+        profile = cursor.fetchone()
+        conn.close()
+
+        if profile:
+            # Store full profile details in session
+            session['selected_profile_id'] = selected_profile_id
+            session['profile_name'] = profile['profile_name']
+            session['fname'] = profile['fname']
+            session['lname'] = profile['lname']
+            session['email'] = profile['email']
+            session['phone'] = profile['phone']
+            session['location'] = profile['location']
+            session['linkedin'] = profile['linkedin']
+            session['github'] = profile['github']
+            session['portfolio'] = profile['portfolio']
+            session['school'] = profile['school']
+            session['projects'] = profile['projects']
+            session['classes'] = profile['classes']
+            session['other_info'] = profile['other_info']
+
+            # Prepare formatted session data
+            prepare_session_data()
+            print("Session Data:", session)
+
+        return redirect(url_for('job_postings'))  # Redirect after selection
 
     return render_template("select_profile.html", profiles=profiles, profile_count=len(profiles))
 
@@ -208,11 +255,86 @@ def profile_details(profile_id):
     else:
         return "Profile not found", 404
 
-@app.route("generate_docs")
-def generate_doc():
-    return None
+@app.route("/generate_docs/<profile>/<job>", methods=['POST'])
+def generate_doc(profile, job):
+    print("\n==== DEBUG: Session Data Before LLM Request ====")
+    print(session)
+    print("===============================================\n")
+
+    # Extract profile and job data from the session
+    user_job_desc = session.get('job_info')  # Assuming job info is already in the session
+    user_self_desc = session.get('user_profile_info')  # Assuming profile info is already in the session
+
+    if not user_job_desc or not user_self_desc:
+        flash("Missing profile or job data. Please select again.", "error")
+        return redirect(url_for('select_profile'))
+
+    # Generate resume using Ollama
+    def generate_resume_ollama(user_job_desc, user_self_desc, model="llama3.2"):
+        """
+        Generates a resume in Markdown format using an AI model from Ollama.
+        """
+        messages = [
+            {"role": "system",
+             "content": "You are an AI that generates resumes and cover letters in Markdown format. "
+                        "Analyze the user's information and tailor the resume and cover letter to the job description."},
+            {"role": "user",
+             "content": f"Generate a resume in Markdown format for the following job:\n\n"
+                        f"### Job Description:\n{user_job_desc}\n\n"
+                        f"### User Background:\n{user_self_desc}"}
+        ]
+
+        try:
+            # Generate response from Ollama
+            response = ollama.chat(model=model, messages=messages)
+
+            # Debugging: Print full response
+            print("\n==== DEBUG: Full AI Response ====")
+            print(response)
+            print("=================================\n")
+
+            # Extract Markdown content
+            markdown_content = response.get("message", {}).get("content", "").strip()
+
+            if not markdown_content:
+                return "Error: AI did not return any content."
+
+            return markdown_content
+
+        except Exception as e:
+            print(f"Error: {str(e)}")  # Print error for debugging
+            return f"Error: {str(e)}"
+
+    # Call the function to generate the resume
+    resume_markdown = generate_resume_ollama(user_job_desc, user_self_desc)
+
+    print("\n==== DEBUG: LLM Response ====")
+    print(resume_markdown)  # Check if it's empty or contains an error
+    print("=================================\n")
+
+    if resume_markdown.startswith("Error:"):
+        flash(resume_markdown, "error")
+        return redirect(url_for("job_postings"))
+
+    # 🔹 Save the generated resume as a Markdown file (without converting to PDF)
+    resume_filename = f"{profile}_resume.md"
+    try:
+        with open(resume_filename, "w") as f:
+            f.write(resume_markdown)
+        flash(f"Resume generated successfully! Filename: {resume_filename}", "success")
+    except Exception as e:
+        flash(f"Error saving the resume: {str(e)}", "error")
+
+    return redirect(url_for("job_postings"))
+
+
+
+@app.route("/debug_session")
+def debug_session():
+    return f"<pre>{session}</pre>"
 
 # Run the Flask App
 if __name__ == "__main__":
     initialize_user_db()  # Ensure database is created before running
     app.run(debug=True)
+
