@@ -1,13 +1,9 @@
-import os
+import re
 import sqlite3
-
-from md2pdf import md2pdf
-import markdown2
-from weasyprint import HTML
-import generate_resume
-from flask import Flask, render_template, request, url_for, redirect, flash, session
-
+from xhtml2pdf import pisa
+import markdown
 import ollama
+from flask import Flask, render_template, request, url_for, redirect, flash, session
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'  # Required for flash messages
@@ -269,43 +265,89 @@ def generate_doc(profile, job):
         flash("Missing profile or job data. Please select again.", "error")
         return redirect(url_for('select_profile'))
 
+    # Generate and convert the resume
+    return generate_and_convert_resume(user_job_desc, user_self_desc, profile)
+
+
+def generate_resume_ollama(user_job_desc, user_self_desc, model="llama3.2"):
+    """
+    Generates a resume in Markdown format using an AI model from Ollama.
+    """
+    messages = [
+        {"role": "system",
+         "content": "You are an AI that generates resumes and cover letters in Markdown format. "
+                    "Analyze the user's information and tailor the resume and cover letter to the job description."},
+        {"role": "user",
+         "content": f"Generate a resume in Markdown format for the following job:\n\n"
+                    f"### Job Description:\n{user_job_desc}\n\n"
+                    f"### User Background:\n{user_self_desc}"}
+    ]
+
+    try:
+        # Generate response from Ollama
+        response = ollama.chat(model=model, messages=messages)
+
+        # Debugging: Print full response
+        print("\n==== DEBUG: Full AI Response ====")
+        print(response)
+        print("=================================\n")
+
+        # Extract Markdown content
+        markdown_content = response.get("message", {}).get("content", "").strip()
+
+        if not markdown_content:
+            return "Error: AI did not return any content."
+
+        return markdown_content
+
+    except Exception as e:
+        print(f"Error: {str(e)}")  # Print error for debugging
+        return f"Error: {str(e)}"
+
+
+def convert_md_to_pdf(md_file, pdf_file):
+    """
+    Converts a Markdown file to a PDF.
+    """
+    try:
+        # Read the markdown file
+        with open(md_file, 'r') as f:
+            md_content = f.read()
+
+        # Clean the Markdown content
+        cleaned_content = clean_markdown(md_content)
+
+        # Convert markdown to HTML
+        html_content = markdown.markdown(cleaned_content)
+
+        # Convert HTML to PDF using xhtml2pdf
+        with open(pdf_file, "wb") as pdf:
+            pisa.CreatePDF(html_content, dest=pdf)
+        print(f"PDF successfully saved to {pdf_file}")
+    except Exception as e:
+        print(f"Error converting markdown to PDF: {e}")
+        raise
+
+def clean_markdown(md_content):
+    """
+    Removes unwanted Markdown syntax, such as inline code and code blocks.
+    """
+    # Remove code blocks (triple backticks)
+    md_content = re.sub(r'```[\s\S]*?```', '', md_content)
+
+    # Remove inline code (backticks)
+    md_content = re.sub(r'`[^`]*`', '', md_content)
+
+    # You can add more regex patterns here to clean other undesired parts of the Markdown.
+
+    return md_content
+
+
+def generate_and_convert_resume(user_job_desc, user_self_desc, profile):
+    """
+    Generates the resume in Markdown format and converts it to PDF.
+    """
     # Generate resume using Ollama
-    def generate_resume_ollama(user_job_desc, user_self_desc, model="llama3.2"):
-        """
-        Generates a resume in Markdown format using an AI model from Ollama.
-        """
-        messages = [
-            {"role": "system",
-             "content": "You are an AI that generates resumes and cover letters in Markdown format. "
-                        "Analyze the user's information and tailor the resume and cover letter to the job description."},
-            {"role": "user",
-             "content": f"Generate a resume in Markdown format for the following job:\n\n"
-                        f"### Job Description:\n{user_job_desc}\n\n"
-                        f"### User Background:\n{user_self_desc}"}
-        ]
-
-        try:
-            # Generate response from Ollama
-            response = ollama.chat(model=model, messages=messages)
-
-            # Debugging: Print full response
-            print("\n==== DEBUG: Full AI Response ====")
-            print(response)
-            print("=================================\n")
-
-            # Extract Markdown content
-            markdown_content = response.get("message", {}).get("content", "").strip()
-
-            if not markdown_content:
-                return "Error: AI did not return any content."
-
-            return markdown_content
-
-        except Exception as e:
-            print(f"Error: {str(e)}")  # Print error for debugging
-            return f"Error: {str(e)}"
-
-    # Call the function to generate the resume
     resume_markdown = generate_resume_ollama(user_job_desc, user_self_desc)
 
     print("\n==== DEBUG: LLM Response ====")
@@ -316,7 +358,7 @@ def generate_doc(profile, job):
         flash(resume_markdown, "error")
         return redirect(url_for("job_postings"))
 
-    # 🔹 Save the generated resume as a Markdown file (without converting to PDF)
+    # Save the generated resume as a Markdown file (without converting to PDF yet)
     resume_filename = f"{profile}_resume.md"
     try:
         with open(resume_filename, "w") as f:
@@ -324,10 +366,17 @@ def generate_doc(profile, job):
         flash(f"Resume generated successfully! Filename: {resume_filename}", "success")
     except Exception as e:
         flash(f"Error saving the resume: {str(e)}", "error")
+        return redirect(url_for("job_postings"))
+
+    # Convert Markdown to PDF after saving
+    try:
+        pdf_filename = f"{profile}_resume.pdf"
+        convert_md_to_pdf(resume_filename, pdf_filename)
+        flash(f"Resume successfully converted to PDF! Filename: {pdf_filename}", "success")
+    except Exception as e:
+        flash(f"Error converting resume to PDF: {str(e)}", "error")
 
     return redirect(url_for("job_postings"))
-
-
 
 @app.route("/debug_session")
 def debug_session():
