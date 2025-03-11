@@ -14,7 +14,7 @@
     <ul class="job-list">
         {% for job in jobs %}
         <li class="job-item">
-            <a href="{{ url_for('job_details', job_id=job['id']) }}">
+            <a href="{{ url_for('jobs.job_details', job_id=job['id']) }}">
                 <strong>{{ job["title"] }}</strong> - {{ job["company"] }}
             </a>
             <p>{{ job["location"] }} | {{ job["job_type"] }} | Posted: {{ job["date_posted"] }}</p>

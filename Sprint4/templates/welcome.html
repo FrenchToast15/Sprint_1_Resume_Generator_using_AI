@@ -9,15 +9,15 @@
 <body>
 <div class="container">
     <h1>Pick Available Jobs or Enter information about yourself </h1>
-    <a href="{{ url_for('job_postings') }}">
-        <button class="button button1">Job Postings</button>
-    </a>
+<!--    <a href="{{ url_for('jobs.job_postings') }}">-->
+<!--        <button class="button button1">Job Postings</button>-->
+<!--    </a>-->
 
-    <a href="{{ url_for('personal_info') }}">
+    <a href="{{ url_for('personal_info.personal_info') }}">
         <button class="button button1">Enter Personal Info</button>
     </a>
 
-    <a href="{{ url_for('select_profile') }}">
+    <a href="{{ url_for('user_profiles.select_profile') }}">
         <button class="button button1">Select Existing User</button>
     </a>
 </div>

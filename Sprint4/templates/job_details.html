@@ -22,7 +22,7 @@
 <a href="{{ job['job_url_direct'] }}">Apply Here</a>
 
 <!-- Modified Form to Trigger Resume Generation -->
-<form action="{{ url_for('generate_doc', profile=session['profile_name'], job=job['id']) }}" method="POST">
+<form action="{{ url_for('documents.generate_doc', profile=session['profile_name'], job=job['id']) }}" method="POST">
     <button type="submit">Generate Cover Letter and Resume</button>
 </form>
 
