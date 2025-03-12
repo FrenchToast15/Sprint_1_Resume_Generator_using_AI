@@ -89,10 +89,12 @@ def job_postings():
     conn = get_db_connection('job_postings.db')
     cursor = conn.cursor()
 
-    cursor.execute("SELECT id, title, company, location FROM rapid_results_job_postings")
+    cursor.execute(
+        "SELECT id, title, company, location FROM rapid_results_job_postings")
     jobs1 = cursor.fetchall()
 
-    cursor.execute("SELECT id, title, company, location FROM rapid_jobs2_job_postings")
+    cursor.execute(
+        "SELECT id, title, company, location FROM rapid_jobs2_job_postings")
     jobs2 = cursor.fetchall()
 
     conn.close()
@@ -110,11 +112,13 @@ def job_details(job_id):
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
 
-    cursor.execute("SELECT * FROM rapid_results_job_postings WHERE id = ?", (job_id,))
+    cursor.execute(
+        "SELECT * FROM rapid_results_job_postings WHERE id = ?", (job_id,))
     job = cursor.fetchone()
 
     if not job:
-        cursor.execute("SELECT * FROM rapid_jobs2_job_postings WHERE id = ?", (job_id,))
+        cursor.execute(
+            "SELECT * FROM rapid_jobs2_job_postings WHERE id = ?", (job_id,))
         job = cursor.fetchone()
 
     conn.close()

@@ -16,7 +16,8 @@ def setup_db():
     # Cleanup after each test
     conn = sqlite3.connect(db_name)
     cursor = conn.cursor()
-    cursor.execute('DROP TABLE IF EXISTS user_information')  # Clean up after test
+    # Clean up after test
+    cursor.execute('DROP TABLE IF EXISTS user_information')
     conn.commit()
     conn.close()
 

@@ -63,4 +63,5 @@ def test_convert_md_to_pdf():
 
                     # Test the function
                     convert_md_to_pdf(md_file, pdf_file)
-                    mock_create_pdf.assert_called_once_with("<h1>HTML</h1>", dest=mock.ANY)
+                    mock_create_pdf.assert_called_once_with(
+                        "<h1>HTML</h1>", dest=mock.ANY)

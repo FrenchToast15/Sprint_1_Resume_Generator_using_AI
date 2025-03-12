@@ -1,6 +1,7 @@
 from flask import Blueprint, session, redirect, url_for, flash
 
-from Sprint4.utils import generate_and_convert_resume  # Assuming this is a helper function
+# Assuming this is a helper function
+from Sprint4.utils import generate_and_convert_resume
 
 documents_bp = Blueprint('documents', __name__)
 
@@ -21,7 +22,8 @@ def generate_doc(profile, job):
         return redirect(url_for('user_profiles.select_profile'))
 
     # Generate PDF content
-    pdf_response = generate_and_convert_resume(user_job_desc, user_self_desc, profile)
+    pdf_response = generate_and_convert_resume(
+        user_job_desc, user_self_desc, profile)
 
     # Handle errors during PDF generation
     if isinstance(pdf_response, str) and pdf_response.startswith("Error:"):

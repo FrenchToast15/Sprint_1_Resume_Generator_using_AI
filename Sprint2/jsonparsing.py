@@ -17,7 +17,7 @@ def parse_json_file(json_file_name):
                     # Adds the parsed data to the list
                     parsed_data.append(data)
                 except (
-                    json.JSONDecodeError
+                        json.JSONDecodeError
                 ) as e:  # if JSON format incorrect, error is caught
                     print(f"Error decoding line: {e}")
 

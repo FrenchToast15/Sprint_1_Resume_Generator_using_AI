@@ -5,7 +5,7 @@ from unittest.mock import patch
 import pytest
 from flask import url_for
 
-from Sprint3.app import app, get_db_connection # save_personal_info
+from Sprint3.app import app, get_db_connection  # save_personal_info
 
 
 def test_get_db_connection():
@@ -45,12 +45,14 @@ def client():
         conn.row_factory = sqlite3.Row  # Access rows by column name
 
         # Create necessary tables for testing in the in-memory database
-        conn.execute('CREATE TABLE personal_info (id INTEGER PRIMARY KEY, fname TEXT, lname TEXT, email TEXT)')
+        conn.execute(
+            'CREATE TABLE personal_info (id INTEGER PRIMARY KEY, fname TEXT, lname TEXT, email TEXT)')
         conn.commit()
         conn.close()
 
         # Set the Flask app to use the in-memory database by updating the app's config
-        app.config['DATABASE'] = ':memory:'  # Update your app to point to the in-memory database
+        # Update your app to point to the in-memory database
+        app.config['DATABASE'] = ':memory:'
 
         # Run the test
         yield client
@@ -62,11 +64,14 @@ def test_welcome_route(client):
     response = client.get("/")
     assert response.status_code == 200  # Check if the response is OK
     # Check if the response contains the expected heading text
-    assert b"Pick Available Jobs or Enter information about yourself" in response.data  # Check for the <h1> text
+    # Check for the <h1> text
+    assert b"Pick Available Jobs or Enter information about yourself" in response.data
 
     # Check for the button text or the button's appearance
-    assert b'Job Postings' in response.data  # Check if the button "Job Postings" is there
-    assert b'Enter Personal Info' in response.data  # Check if the button "Enter Personal Info" is there
+    # Check if the button "Job Postings" is there
+    assert b'Job Postings' in response.data
+    # Check if the button "Enter Personal Info" is there
+    assert b'Enter Personal Info' in response.data
 
 
 def test_personal_info_route(client):
@@ -77,7 +82,8 @@ def test_personal_info_route(client):
     assert response.status_code == 200
 
     # Check if the response contains the following
-    assert b"Personal Information" in response.data  # Assuming there's a heading with this text
+    # Assuming there's a heading with this text
+    assert b"Personal Information" in response.data
 
     # Checks for input element in `personal_info.html`
     assert b'<input' in response.data
@@ -99,7 +105,8 @@ def test_job_details(client):
     conn.close()
 
     # Send GET request to /job/<job_id>
-    response = client.get(f"/job/{job_id}")  # Use the generated job_id in the URL
+    # Use the generated job_id in the URL
+    response = client.get(f"/job/{job_id}")
 
     # Check to see the response status is 200
     assert response.status_code == 200
@@ -216,4 +223,5 @@ def test_display_info(client):
         assert b'San Francisco' in response.data
 
         # Make sure the query gets the lasted data entry
-        mock_cursor.execute.assert_called_once_with("SELECT * FROM users ORDER BY id DESC LIMIT 1")
+        mock_cursor.execute.assert_called_once_with(
+            "SELECT * FROM users ORDER BY id DESC LIMIT 1")

@@ -82,7 +82,8 @@ def test_database_schema():
         "salaryRange", "jobProvider", "jobProviderUrl"
     }
 
-    expected_providers_columns = {"rapid_jobs2_id", "provider_name", "provider_url"}
+    expected_providers_columns = {
+        "rapid_jobs2_id", "provider_name", "provider_url"}
 
     assert rapid_results_columns == expected_rapid_results_columns, "rapid_results_job_postings schema mismatch!"
     assert rapid_jobs2_columns == expected_rapid_jobs2_columns, "rapid_jobs2_job_postings schema mismatch!"
@@ -116,8 +117,10 @@ def test_database_insert_and_retrieve():
                 "image": "https://example.com/test.jpg",
                 "datePosted": "2025-02-12",
                 "jobProviders": [
-                    {"jobProvider": "TestLinkedIn", "url": "https://linkedin.com/test_123"},
-                    {"jobProvider": "TestIndeed", "url": "https://indeed.com/test_123"}
+                    {"jobProvider": "TestLinkedIn",
+                     "url": "https://linkedin.com/test_123"},
+                    {"jobProvider": "TestIndeed",
+                     "url": "https://indeed.com/test_123"}
                 ]
             }
         ],
@@ -143,21 +146,25 @@ def test_database_insert_and_retrieve():
     cursor = conn.cursor()
 
     # Verify job postings exist
-    cursor.execute("SELECT * FROM rapid_jobs2_job_postings WHERE id = ?", ("test_123",))
+    cursor.execute(
+        "SELECT * FROM rapid_jobs2_job_postings WHERE id = ?", ("test_123",))
     job_result = cursor.fetchone()
 
-    cursor.execute("SELECT * FROM rapid_results_job_postings WHERE id = ?", ("result_001",))
+    cursor.execute(
+        "SELECT * FROM rapid_results_job_postings WHERE id = ?", ("result_001",))
     result_job = cursor.fetchone()
 
     # Verify job providers exist
-    cursor.execute("SELECT * FROM rapid_jobs2_job_providers WHERE rapid_jobs2_id = ?", ("test_123",))
+    cursor.execute(
+        "SELECT * FROM rapid_jobs2_job_providers WHERE rapid_jobs2_id = ?", ("test_123",))
     provider_results = cursor.fetchall()
 
     conn.close()
 
     assert job_result is not None, "Test job was not inserted into rapid_jobs2_job_postings!"
     assert result_job is not None, "Test job was not inserted into rapid_results_job_postings!"
-    assert len(provider_results) == 2, "Test job providers were not inserted correctly!"
+    assert len(
+        provider_results) == 2, "Test job providers were not inserted correctly!"
 
     print("✅ Test passed: Database insert and retrieve works!")
 

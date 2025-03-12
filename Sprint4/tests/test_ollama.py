@@ -10,14 +10,16 @@ def test_generate_resume_ollama():
     generated_text = generate_resume_using_ai(user_job_desc, user_self_desc)
 
     assert generated_text, "⚠️ Ollama did not return any response"
-    assert not generated_text.startswith("Error"), f"⚠️ Ollama returned an error: {generated_text}"
+    assert not generated_text.startswith(
+        "Error"), f"⚠️ Ollama returned an error: {generated_text}"
 
     print("✅ Ollama is working correctly and generated a resume!")
     print(generated_text)
 
 
 def test_ollama_response():
-    url = "http://localhost:11434/api/generate"  # Ollama's default local API endpoint
+    # Ollama's default local API endpoint
+    url = "http://localhost:11434/api/generate"
 
     data = {
         "model": "llama3.2",  # Change this to the model you're using
@@ -45,13 +47,17 @@ def test_generated_prompt_contains_job_and_user_info():
     generated_prompt = generate_resume_using_ai(job_desc, user_info)
 
     # Check if key job description elements exist in the generated output
-    assert "software engineer" in generated_prompt.lower(), "❌ Job title missing from generated prompt!"
-    assert "python" in generated_prompt.lower(), "❌ Python skill missing from generated prompt!"
+    assert "software engineer" in generated_prompt.lower(
+    ), "❌ Job title missing from generated prompt!"
+    assert "python" in generated_prompt.lower(
+    ), "❌ Python skill missing from generated prompt!"
     assert "sql" in generated_prompt.lower(), "❌ SQL skill missing from generated prompt!"
 
     # Check if key user information elements exist in the generated output
-    assert "computer science" in generated_prompt.lower(), "❌ Degree information missing from generated prompt!"
-    assert "3 years" in generated_prompt.lower(), "❌ Experience duration missing from generated prompt!"
+    assert "computer science" in generated_prompt.lower(
+    ), "❌ Degree information missing from generated prompt!"
+    assert "3 years" in generated_prompt.lower(
+    ), "❌ Experience duration missing from generated prompt!"
 
     print("✅ Test passed: The generated resume contains relevant job description and user information.")
 

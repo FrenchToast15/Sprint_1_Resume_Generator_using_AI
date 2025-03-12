@@ -1,19 +1,20 @@
 from flask import Flask, session
 
+from Sprint4.blueprints.documents import documents_bp
+from Sprint4.blueprints.jobs import jobs_bp
+from Sprint4.blueprints.personal_info import personal_info_bp
+from Sprint4.blueprints.user_profiles import user_profiles_bp
+from Sprint4.blueprints.welcome import welcome_info_bp
 from utils import *
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'  # Required for flash messages
 
 # Import blueprints after the app is initialized
-from Sprint4.blueprints.documents import documents_bp
-from Sprint4.blueprints.jobs import jobs_bp
-from Sprint4.blueprints.personal_info import personal_info_bp
-from Sprint4.blueprints.user_profiles import user_profiles_bp
-from Sprint4.blueprints.welcome import welcome_info_bp
 
 # Register blueprints
-app.register_blueprint(personal_info_bp, url_prefix="/")  # All routes will be prefixed with `/`
+# All routes will be prefixed with `/`
+app.register_blueprint(personal_info_bp, url_prefix="/")
 app.register_blueprint(welcome_info_bp, url_prefix="/")  # No prefix
 app.register_blueprint(jobs_bp, url_prefix="/jobs")
 app.register_blueprint(user_profiles_bp, url_prefix='/profiles')

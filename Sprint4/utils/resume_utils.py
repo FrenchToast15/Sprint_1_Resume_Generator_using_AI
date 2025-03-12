@@ -23,14 +23,16 @@ def generate_resume_using_ai(user_job_desc, user_self_desc, model="llama3.2"):
 
     try:
         response = ollama.chat(model=model, messages=messages)
-        markdown_content = response.get("message", {}).get("content", "").strip()
+        markdown_content = response.get(
+            "message", {}).get("content", "").strip()
 
         if not markdown_content:
             return "Error: AI did not return any content."
 
         return markdown_content
     except Exception as e:
-        print(f"Error while generating resume: {str(e)}")  # Debug-friendly output
+        # Debug-friendly output
+        print(f"Error while generating resume: {str(e)}")
         return f"Error: {str(e)}"
 
 
@@ -60,7 +62,8 @@ def generate_and_convert_resume(user_job_desc, user_self_desc, profile):
     # Save the Markdown file
     try:
         save_file(resume_markdown, markdown_path)
-        flash(f"Resume generated successfully! Filename: {markdown_path}", "success")
+        flash(
+            f"Resume generated successfully! Filename: {markdown_path}", "success")
     except Exception as e:
         flash(f"Error saving the resume: {str(e)}", "error")
         return redirect(url_for("jobs.job_postings"))
@@ -68,7 +71,8 @@ def generate_and_convert_resume(user_job_desc, user_self_desc, profile):
     # Convert Markdown to PDF
     try:
         convert_md_to_pdf(markdown_path, pdf_path)
-        flash(f"Resume successfully converted to PDF! Filename: {pdf_path}", "success")
+        flash(
+            f"Resume successfully converted to PDF! Filename: {pdf_path}", "success")
     except Exception as e:
         flash(f"Error converting resume to PDF: {str(e)}", "error")
         return redirect(url_for("jobs.job_postings"))

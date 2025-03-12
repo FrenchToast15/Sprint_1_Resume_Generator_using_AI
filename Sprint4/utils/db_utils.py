@@ -37,7 +37,8 @@ def save_personal_info(user_data):
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''', user_data)
         conn.commit()
     except sqlite3.IntegrityError:
-        flash(f"Profile name '{profile_name}' already exists! Choose a different name.", "error")
+        flash(
+            f"Profile name '{profile_name}' already exists! Choose a different name.", "error")
         return False
     finally:
         conn.close()

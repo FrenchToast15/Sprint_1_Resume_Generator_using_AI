@@ -1,10 +1,12 @@
 from flask import Blueprint, render_template, request, redirect, url_for
 
 from Sprint4.utils import get_db_connection
-from Sprint4.utils import save_personal_info  # Assuming you have a save_personal_info function
+# Assuming you have a save_personal_info function
+from Sprint4.utils import save_personal_info
 
 # Initialize the blueprint
-personal_info_bp = Blueprint("personal_info", __name__, template_folder="../templates")
+personal_info_bp = Blueprint(
+    "personal_info", __name__, template_folder="../templates")
 
 
 # Personal Info Form
@@ -36,7 +38,8 @@ def submit_info():
         if save_personal_info(user_data):
             return redirect(url_for('personal_info.display_info'))
         else:
-            return redirect(url_for('personal_info.personal_info'))  # Stay on form if error
+            # Stay on form if error
+            return redirect(url_for('personal_info.personal_info'))
 
     return "Form submission error", 400
 

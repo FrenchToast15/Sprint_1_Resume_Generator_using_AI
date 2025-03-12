@@ -27,9 +27,11 @@ def generate_resume_ollama(user_job_desc, user_self_desc, model="llama3.2"):
     try:
 
         # Generate response from Ollama
-        response = ollama.chat(model=model, messages=messages)  # Ensure correct model name
+        # Ensure correct model name
+        response = ollama.chat(model=model, messages=messages)
 
-        markdown_content = response.get("message", {}).get("content", "Error: No Generated Content")
+        markdown_content = response.get("message", {}).get(
+            "content", "Error: No Generated Content")
         return markdown_content
 
     except Exception as e:

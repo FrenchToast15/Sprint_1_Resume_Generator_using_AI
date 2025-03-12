@@ -119,7 +119,8 @@ def insert_data_from_job_postings(parsed_data, dbname='job_postings.db'):
                             ''', (job_id, provider_name, provider_url))
 
                     except Exception as e:
-                        print(f"Error inserting job posting {data.get('id', 'unknown')}: {e}")
+                        print(
+                            f"Error inserting job posting {data.get('id', 'unknown')}: {e}")
 
     for data in parsed_data:
         if isinstance(data, dict):  # Ensure it's a dictionary before inserting

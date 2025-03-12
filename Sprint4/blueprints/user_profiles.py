@@ -21,7 +21,8 @@ def select_profile():
         # Fetch full profile details from the database
         conn = get_db_connection("users.db")
         cursor = conn.cursor()
-        cursor.execute("SELECT * FROM user_information WHERE id = ?", (selected_profile_id,))
+        cursor.execute(
+            "SELECT * FROM user_information WHERE id = ?", (selected_profile_id,))
         profile = cursor.fetchone()
         conn.close()
 
@@ -46,7 +47,8 @@ def select_profile():
             prepare_user_profile_session()
             print("Session Data:", session)
 
-        return redirect(url_for('jobs.job_postings'))  # Redirect after selection
+        # Redirect after selection
+        return redirect(url_for('jobs.job_postings'))
 
     return render_template("select_profile.html", profiles=profiles, profile_count=len(profiles))
 
