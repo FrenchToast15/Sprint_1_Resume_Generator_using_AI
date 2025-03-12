@@ -1,5 +1,7 @@
 import sqlite3
 
+from flask import flash
+
 
 # Function to get a database connection
 def get_db_connection(db_name):
@@ -21,6 +23,7 @@ def initialize_user_db():
       )''')
     conn.commit()
     conn.close()
+
 
 # Save Personal Info to Database (Handles Duplicate Profiles)
 def save_personal_info(user_data):

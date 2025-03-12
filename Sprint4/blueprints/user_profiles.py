@@ -5,6 +5,7 @@ from Sprint4.utils import get_db_connection, prepare_user_profile_session
 
 user_profiles_bp = Blueprint('user_profiles', __name__)
 
+
 # Select Profile Page
 @user_profiles_bp.route("/select_profile", methods=['GET', 'POST'])
 def select_profile():

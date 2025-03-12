@@ -15,7 +15,7 @@
         <ul class="job-list">
             {% for profile in profiles %}
             <li class="job-item">
-                <input type="radio" id="profile_{{ profile.id }}" name="profile_id" value="{{ profile.id }}" required>
+                <input id="profile_{{ profile.id }}" name="profile_id" required type="radio" value="{{ profile.id }}">
                 <label for="profile_{{ profile.id }}">{{ profile["profile_name"] }}</label>
             </li>
             {% endfor %}

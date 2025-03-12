@@ -16,6 +16,8 @@ def prepare_user_profile_session():
     Classes: {session.get('classes', 'N/A')}
     Other Info: {session.get('other_info', 'N/A')}
     """
+
+
 # Prepare job information session data
 def prepare_job_info_session():
     session['job_info'] = f"""

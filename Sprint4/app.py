@@ -1,6 +1,5 @@
 from flask import Flask, session
-import os
-from constants import *
+
 from utils import *
 
 app = Flask(__name__)
@@ -12,7 +11,6 @@ from Sprint4.blueprints.jobs import jobs_bp
 from Sprint4.blueprints.personal_info import personal_info_bp
 from Sprint4.blueprints.user_profiles import user_profiles_bp
 from Sprint4.blueprints.welcome import welcome_info_bp
-
 
 # Register blueprints
 app.register_blueprint(personal_info_bp, url_prefix="/")  # All routes will be prefixed with `/`
@@ -26,8 +24,8 @@ app.register_blueprint(documents_bp, url_prefix='/documents')
 def debug_session():
     return f"<pre>{session}</pre>"
 
+
 # Run the Flask App
 if __name__ == "__main__":
     initialize_user_db()  # Ensure database is created before running
     app.run(debug=True)
-

@@ -5,6 +5,7 @@ from Sprint4.utils import prepare_job_info_session
 
 jobs_bp = Blueprint('jobs', __name__)
 
+
 # Display Job Postings
 @jobs_bp.route("/job_postings")
 def job_postings():
@@ -66,4 +67,3 @@ def job_details(job_id):
         return render_template("job_details.html", job=job)
     else:
         return "Job not found", 404
-

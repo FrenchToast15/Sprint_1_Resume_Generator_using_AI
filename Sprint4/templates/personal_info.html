@@ -8,15 +8,15 @@
 </head>
 <body>
 <!-- Flash Messages (Error Handling) -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            <div>
-                {% for category, message in messages %}
-                    <p class="{{ category }}">{{ message }}</p>
-                {% endfor %}
-            </div>
-        {% endif %}
-    {% endwith %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div>
+    {% for category, message in messages %}
+    <p class="{{ category }}">{{ message }}</p>
+    {% endfor %}
+</div>
+{% endif %}
+{% endwith %}
 
 <h1>Personal Information Form</h1>
 

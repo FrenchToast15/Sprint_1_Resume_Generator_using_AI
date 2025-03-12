@@ -1,12 +1,10 @@
 from flask import Blueprint, render_template, request, redirect, url_for
+
 from Sprint4.utils import get_db_connection
 from Sprint4.utils import save_personal_info  # Assuming you have a save_personal_info function
 
 # Initialize the blueprint
 personal_info_bp = Blueprint("personal_info", __name__, template_folder="../templates")
-
-
-
 
 
 # Personal Info Form
